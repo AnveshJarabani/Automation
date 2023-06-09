@@ -4,10 +4,13 @@ from selenium.webdriver.support import expected_conditions as EC
 import json
 from selenium import webdriver
 chromeOptions=webdriver.ChromeOptions()
-driver=webdriver.Chrome('sldr.exe')
+driver=webdriver.Chrome('sldr.exe',options=chromeOptions)
+driver.implicitly_wait(5)
 driver.maximize_window()
 driver.get('https://www.linkedin.com/')
-driver.implicitly_wait(30)
+elms=driver.find_elements(By.TAG_NAME,'button')
+if len(elms)==0:
+    driver.refresh()
 driver.find_element(By.CSS_SELECTOR,"[id='session_key']").send_keys("anveshjarabani@gmail.com")
 driver.find_element(By.CSS_SELECTOR,"[id='session_password']").send_keys(json.load(open('encrypt.json','r'))['password'])
 driver.find_element(By.CSS_SELECTOR,"[data-id*='sign-in-form__submit-btn']").click()
@@ -18,26 +21,51 @@ driver.find_element(By.CSS_SELECTOR,"[id*='jobs-search-box-keyword']").send_keys
 WebDriverWait(driver,25).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,"[aria-label*='Easy Apply filter.']")))
 driver.find_element(By.CSS_SELECTOR,"[aria-label*='Easy Apply filter.']").click()
 # WebDriverWait(driver,25).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,"[class*='jobs-apply-button']")))
-try:
-    WebDriverWait(driver,2).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR,"[class*='jobs-apply-button artdeco-button artdeco-button--3']")))
-except:
-    driver.find_element(By.CSS_SELECTOR,"[class*='jobs-apply-button artdeco-button artdeco-button--3']").click()
-def easyapply():
-    WebDriverWait(driver,25).until(EC.presence_of_element_located((By.CSS_SELECTOR,"[aria-label*='Continue to next step']")))
-    driver.find_element(By.CSS_SELECTOR,"[aria-label*='Continue to next step']").click()
-    driver.find_element(By.CSS_SELECTOR,"[class*='button__text]").click()
-    driver.find_element(By.CSS_SELECTOR,"[type*='text]").send_keys(5)
-    driver.find_element(By.CSS_SELECTOR,"[type*='text]").send_keys(5)
-    driver.find_element(By.CSS_SELECTOR,"[class*='button__text]").click()
-    driver.find_element(By.CSS_SELECTOR,"[id*='follow-company]").click()
-    driver.find_element(By.CSS_SELECTOR,"[class*='button__text]").click()
-if len(driver.window_handles)==1:
-    easyapply()
-elif driver.current_url.find('myworkdayjobs')>0:
-    True
-else:
-    exit()
-driver.find_element(By.LINK_TEXT,"Apply").click()
+def apply_job(i):
+    apply_buttons = driver.find_elements(By.CSS_SELECTOR, "button[aria-label*='Easy Apply to']")
+    if len(apply_buttons)!=0:
+        apply_buttons[0].click()
+    else:
+        return
+    flg = True
+    while flg:
+        try:
+            driver.find_element(
+                By.CSS_SELECTOR, "[aria-label*='Continue to next step']").click()
+            invalid_elms = driver.find_elements(
+                By.CSS_SELECTOR, 'div[aria-invalid="true"]')
+            for elem in invalid_elms:
+                try:
+                    elem.find_element(
+                        By.CSS_SELECTOR, "input[type*='text']").send_keys(5)
+                except:
+                    pass
+                # try:
+
+
+        except:
+            flg = False
+    try:
+        driver.find_element(By.CSS_SELECTOR,
+                        "[aria-label*='Review your application']").click()
+    except:
+        pass
+    try:
+        driver.find_element(By.CSS_SELECTOR,
+                    "[aria-label*='Submit application']").click()
+    except:
+        pass
+    driver.find_element(By.CSS_SELECTOR, "button[aria-label*='Dismiss']").click()
+
+jobs = driver.find_elements(
+    By.CSS_SELECTOR, "div[class*='job-card-container--clickable']")
+
+for r,i in enumerate(jobs):
+    apply_job(i)
+    jobs = driver.find_elements(
+        By.CSS_SELECTOR, "div[class*='job-card-container--clickable']")
+    element = jobs[r+1]
+    element.click()
 
 
 
