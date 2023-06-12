@@ -7,7 +7,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 user='test_1124'
 passwrd='xsdf_~#@sdf'
-
 # Fetch a random proxy from ProxyMesh
 proxy_mesh_url = 'http://proxy.proxy-mesh.com:31280'  # Replace with the ProxyMesh URL
 proxy_mesh_proxy_list = ['proxy1.proxy-mesh.com:31280', 'proxy2.proxy-mesh.com:31280']  # Add more proxies if available
@@ -35,7 +34,7 @@ if len(elms)==0:
     driver.get('https://www.linkedin.com/')
 time.sleep(2)
 find(css,"input[id='session_key']").send_keys("anveshjarabani@gmail.com")
-path=r'C:\Users\anves\Downloads\job automation\{}'
+path = r'C:\Users\anves\Downloads\job automation\{}' 
 find(css,"input[id='session_password']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['password'])
 find(css,"button[data-id*='sign-in-form__submit-btn']").click()
 wait(driver,100).until(located((css,"[title*='Jobs']"))) 
