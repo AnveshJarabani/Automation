@@ -22,12 +22,12 @@ capabilities = webdriver.DesiredCapabilities.CHROME.copy()
 proxy.add_to_capabilities(capabilities)
 chromeOptions=webdriver.ChromeOptions()
 driver=webdriver.Chrome('sldr.exe',options=chromeOptions,desired_capabilities=capabilities)
+# driver.implicitly_wait(5)
 css=By.CSS_SELECTOR
 find=driver.find_element
 finds=driver.find_elements
 located=EC.presence_of_all_elements_located
 clkable=EC.element_to_be_clickable
-# driver.implicitly_wait(3)
 driver.maximize_window()
 driver.get('https://www.linkedin.com/')
 elms=finds(By.TAG_NAME,'button')
@@ -43,7 +43,11 @@ find(css,"[title*='Jobs']").click()
 wait(driver,25).until(located((css,"[id*='jobs-search-box-keyword']")))
 find(css,"[id*='jobs-search-box-keyword']").send_keys('data engineer\n')
 wait(driver,25).until(located((css,"[aria-label*='Easy Apply filter.']")))
-find(css,"[aria-label*='Easy Apply filter.']").click()
+find(css,"button[aria-label*='Easy Apply filter.']").click()
+find(css,"button[aria-label*='Salary filter.']").click()
+find(css,"label[for*='V2-7']").click()
+time.sleep(.5)
+[i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
 # wait(driver,25).until(located((css,"[class*='jobs-apply-button']")))
 def select_yes(elem):
     try:
@@ -87,7 +91,7 @@ def apply_job(i):
                         select_yes(elem)
                     elif 'Do you have' in elem.text and 'experience' in elem.text:
                         select_yes(elem)
-                    elif 'eligible to work' in elem.text:
+                    elif 'eligible to work' in elem.text or 'authorized to work' in elem.text:
                         select_yes(elem)
                     elif 'sponsorship' in elem.text or 'Sponsorship' in elem.text:
                         select_yes(elem)
@@ -138,10 +142,29 @@ while page<40:
     jobs=finds(css,"li[class*='jobs-search-results__list-item']")
     driver.execute_script("arguments[0].scrollIntoView()",jobs[10])
     driver.execute_script("arguments[0].scrollIntoView()",jobs[-1])
-    time.sleep(2)
+    # time.sleep(2)
+    with open(path.format('data_eng_job_source_data.json'),'r') as f:
+        lst=json.load(f)
     jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-    jobs=[i for i in jobs if 'Easy Apply' in i.text]
     for r,i in enumerate(jobs):
+        while True:
+            try:
+                i.click()
+                break
+            except:
+                jobs=finds(css,"li[class*='jobs-search-results__list-item']")
+                i=jobs[r]
+        time.sleep(2)
+        data_dict={"Details":find(css,"div[class*='jobs-unified-top-card__content--two-pane']").text,
+        "Desc":find(css,"article[class*='jobs-description']").text,
+        "Salary Detail":find(css,"div[id*='SALARY']").text,
+        "Company Detail":find(css,"div[class*='jobs-company__box']").text}
+        lst.append(data_dict)
+    with open(path.format('data_eng_job_source_data.json'),'w') as f:
+        json.dump(lst,f)
+    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
+    easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
+    for r,i in enumerate(easy_apply):
             element = jobs[r]
             while True:
                 try:
@@ -149,8 +172,8 @@ while page<40:
                     break
                 except:
                     jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-                    jobs=[i for i in jobs if 'Easy Apply' in i.text]
-                    element=jobs[r]
+                    easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
+                    element=easy_apply[r]
             apply_job(i)    
     page+=1
     time.sleep(2)
