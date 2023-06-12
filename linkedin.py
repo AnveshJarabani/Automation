@@ -143,7 +143,7 @@ while page<40:
     driver.execute_script("arguments[0].scrollIntoView()",jobs[10])
     driver.execute_script("arguments[0].scrollIntoView()",jobs[-1])
     # time.sleep(2)
-    with open(path.format('data_eng_job_source_data.json'),'r') as f:
+    with open(path.format('data_eng_job_source_data.json'),'r', encoding='utf-8') as f:
         lst=json.load(f)
     jobs=finds(css,"li[class*='jobs-search-results__list-item']")
     for r,i in enumerate(jobs):
