@@ -34,7 +34,7 @@ if len(elms)==0:
     driver.get('https://www.linkedin.com/')
 time.sleep(2)
 find(css,"input[id='session_key']").send_keys("anveshjarabani@gmail.com")
-path = r'C:\Users\anves\Downloads\job automation\{}' 
+path = r'C:\Users\ajarabani\Downloads\job automation\{}'
 find(css,"input[id='session_password']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['password'])
 find(css,"button[data-id*='sign-in-form__submit-btn']").click()
 wait(driver,100).until(located((css,"[title*='Jobs']"))) 
@@ -137,43 +137,45 @@ def apply_job(i):
         except:
             pass
 page=1
-while page<40:
+while page<=40:
     jobs=finds(css,"li[class*='jobs-search-results__list-item']")
     driver.execute_script("arguments[0].scrollIntoView()",jobs[10])
     driver.execute_script("arguments[0].scrollIntoView()",jobs[-1])
-    # time.sleep(2)
     with open(path.format('data_eng_job_source_data.json'),'r', encoding='utf-8') as f:
-        lst=json.load(f)
-    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-    for r,i in enumerate(jobs):
-        while True:
-            try:
-                i.click()
-                break
-            except:
-                jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-                i=jobs[r]
+        dict=json.load(f)
+    time.sleep(2)
+    for r in range(len(jobs)):
+        driver.execute_script("arguments[0].scrollIntoView()", finds(
+            css, "li[class*='jobs-search-results__list-item']")[r])
+        finds(css, "li[class*='jobs-search-results__list-item']")[r].find_element(css,'a').click()
         time.sleep(2)
-        data_dict={"Details":find(css,"div[class*='jobs-unified-top-card__content--two-pane']").text,
-        "Desc":find(css,"article[class*='jobs-description']").text,
-        "Salary Detail":find(css,"div[id*='SALARY']").text,
-        "Company Detail":find(css,"div[class*='jobs-company__box']").text}
-        lst.append(data_dict)
+        if finds(css, "li[class*='jobs-company__box']"):
+            print(find(css, "div[class*='jobs-company__box']").text.split('\n')[1])
+            dict['Company Detail'].append(
+            find(css, "div[class*='jobs-company__box']").text)
+        else:
+            print('No Company Detail Found')
+            dict['Company Detail'].append('No Company Detail Found')
+        dict['Details'].append(
+            find(css, "div[class*='jobs-unified-top-card__content--two-pane']").text)
+        dict['Desc'].append(
+            find(css, "div[class*='jobs-description']").text)
+        dict['Salary Detail'].append(find(css, "div[id*='SALARY']").text)
     with open(path.format('data_eng_job_source_data.json'),'w') as f:
-        json.dump(lst,f)
-    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-    easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
-    for r,i in enumerate(easy_apply):
-            element = jobs[r]
-            while True:
-                try:
-                    element.click()
-                    break
-                except:
-                    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-                    easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
-                    element=easy_apply[r]
-            apply_job(i)    
+        json.dump(dict,f)
+    # jobs=finds(css,"li[class*='jobs-search-results__list-item']")
+    # easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
+    # for r,i in enumerate(easy_apply):
+    #         element = jobs[r]
+    #         while True:
+    #             try:
+    #                 element.click()
+    #                 break
+    #             except:
+    #                 jobs=finds(css,"li[class*='jobs-search-results__list-item']")
+    #                 easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
+    #                 element=easy_apply[r]
+    #         apply_job(i)    
     page+=1
     time.sleep(2)
     find(css,"li[data-test-pagination-page-btn='{}']".format(page)).click()

@@ -7,8 +7,8 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 path = r"C:\Users\ajarabani\Downloads\job automation\{}"
 data_dict=json.load(open(path.format('data_eng_job_source_data.json'),'r'))
-df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
-df=pd.concat(df_lst,ignore_index=True)
+# df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
+df=pd.DataFrame(data_dict)
 patrn=re.compile(r"\b\w+\b")
 nltk.download('stopwords')
 stop_words=set(stopwords.words('english'))
@@ -21,12 +21,10 @@ for i in df['Desc']:
 phrase_frequencies=Counter(filterd_phrases)
 keywords={'word':[i for i,_ in phrase_frequencies.items()],
           'freq':[i for _,i in phrase_frequencies.items()]}
-df_keywords=pd.DataFrame(keywords)
-df_keywords=df_keywords.sort_values(by='freq',ascending=False,ignore_index=True)
-print(df_keywords)
-
-
-
+df_phrases=pd.DataFrame(keywords)
+df_phrases=df_phrases.sort_values(by='freq',ascending=False,ignore_index=True)
+print(df_phrases.head(100))
+# df_phrases.to_csv(path.format('key_phrases.csv'),index=False)
 """
 1. FIND THE TOP 25 KEYWORDS WITH THE FREQUENCY FROM Desc
 2. EXTRACT COMPANY NAMES, LOCATION, SALARY RANGE. 
