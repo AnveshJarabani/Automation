@@ -9,6 +9,11 @@ path = r"C:\Users\ajarabani\Downloads\job automation\{}"
 data_dict=json.load(open(path.format('data_eng_job_source_data.json'),'r'))
 # df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
 df=pd.DataFrame(data_dict)
+df['Salary'] = df['Salary Detail'].apply(
+    lambda x: [i for i in x.split('\n') if '$' in i])
+df['Company'] = df['Company Detail'].apply(lambda x: x.split('\n')[1])
+df['Position'] = df['Details'].apply(lambda x: x.split('\n')[0])
+
 patrn=re.compile(r"\b\w+\b")
 nltk.download('stopwords')
 stop_words=set(stopwords.words('english'))
@@ -30,4 +35,3 @@ print(df_phrases.head(100))
 2. EXTRACT COMPANY NAMES, LOCATION, SALARY RANGE. 
 3. DOES IT HAVE EASY APPLY ON THEM. 
 """
-

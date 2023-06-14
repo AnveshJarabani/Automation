@@ -60,83 +60,96 @@ def select_yes(elem):
             elem.find_element(css,"option[value*='Yes']").click()
         except:
             elem.find_element(css,"input[type*='text']").send_keys('Yes')
-def apply_job(i):
-    time.sleep(2)
-    apply_buttons = finds(css, "div[class*='jobs-apply-button--']")
-    if len(apply_buttons)!=0:
-        apply_buttons[0].click()
-    else:
-        return
-    while True:
-        if finds(css, 'div[aria-invalid="true"]'):
-            invalid_elms = finds(
-            css, 'div[aria-invalid="true"]')
-            for elem in invalid_elms:
-                try:
-                    if 'City' in elem.text:
-                        elem.find_element(
-                        css, "input[type*='text']").send_keys('Chandler, Arizona, United States')
-                        time.sleep(.5)
-                        elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
-                    elif 'years' in elem.text:
-                        elem.find_element(
-                        css, "input[type*='text']").send_keys(5)
-                    elif 'salary' in elem.text or 'pay' in elem.text:
-                        elem.find_element(
-                        css, "input[type*='text']").send_keys(190000)
-                    elif 'Name*' in elem.text:
-                        elem.find_element(
-                        css, "input[type*='text']").send_keys('Anvesh Jarabani')
-                    elif 'commut' in elem.text:
-                        select_yes(elem)
-                    elif 'Do you have' in elem.text and 'experience' in elem.text:
-                        select_yes(elem)
-                    elif 'eligible to work' in elem.text or 'authorized to work' in elem.text:
-                        select_yes(elem)
-                    elif 'sponsorship' in elem.text or 'Sponsorship' in elem.text:
-                        select_yes(elem)
-                    elif 'How did you hear' in elem.text:
-                        elem.find_element(
-                        css, "input[type*='text']").send_keys('Linkedin')  
-                    elif 'you able to begin' in elem.text or 'When can you start' in elem.text:
-                        elem.find_element(
-                        css, "input[type*='text']").send_keys('2 WEEKS FROM OFFER')  
-                    elif 'I Agree Terms' in elem.text:
-                        elem.find_element(css,'label').click()
-                except:
-                    pass      
-        elif 'Self-Identification' in find(css,"div[class*='jobs-easy-apply-content']").text:
-            options=find(css,"div[class*='jobs-easy-apply-content']").find_elements(css,"select")
-            for x in options:
-                if 'veteran' in x.text:
-                    x.find_element(css,"option[value*='Select an option']").click()
-                    x.find_element(css,"option[value*='I am not']").click()
-                elif 'Race' in x.text:
-                    x.find_element(css,"option[value*='Select an option']").click()
-                    x.find_element(css,"option[value*='Asian']").click()
-                elif 'Male' in x.text:
-                    x.find_element(css,"option[value*='Select an option']").click()
-                    x.find_element(css,"option[value*='Male']").click()
-                elif 'Disability' in x.text:
-                    x.find_element(css,"option[value*='Select an option']").click()
-                    x.find_element(css,"option[value*='No']").click()
-            if finds(css, "button[aria-label*='Continue to next step']"):
+def apply_job():
+    try:
+        data=[]
+        time.sleep(2)
+        apply_buttons = finds(css, "div[class*='jobs-apply-button--']")
+        if len(apply_buttons)!=0:
+            apply_buttons[0].click()
+        else:
+            return
+        while True:
+            if finds(css, 'div[aria-invalid="true"]'):
+                invalid_elms = finds(
+                css, 'div[aria-invalid="true"]')
+                for elem in invalid_elms:
+                    try:
+                        if 'City' in elem.text:
+                            elem.find_element(
+                            css, "input[type*='text']").send_keys('Chandler, Arizona, United States')
+                            time.sleep(.5)
+                            elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
+                            time.sleep(.5)
+                        elif 'years' in elem.text:
+                            elem.find_element(
+                            css, "input[type*='text']").send_keys(5)
+                        elif 'salary' in elem.text or 'pay' in elem.text or 'compensation' in elem.text:
+                            elem.find_element(
+                            css, "input[type*='text']").send_keys(190000)
+                        elif 'Name\n' in elem.text:
+                            elem.find_element(
+                            css, "input[type*='text']").send_keys('Anvesh Jarabani')
+                        elif 'commut' in elem.text:
+                            select_yes(elem)
+                        elif 'Do you have' in elem.text and 'experience' in elem.text:
+                            select_yes(elem)
+                        elif 'eligible to work' in elem.text or 'authorized to work' in elem.text:
+                            select_yes(elem)
+                        elif 'sponsorship' in elem.text or 'Sponsorship' in elem.text:
+                            select_yes(elem)
+                        elif 'How did you hear' in elem.text:
+                            elem.find_element(
+                            css, "input[type*='text']").send_keys('Linkedin')  
+                        elif 'you able to begin' in elem.text or 'When can you start' in elem.text:
+                            elem.find_element(
+                            css, "input[type*='text']").send_keys('2 WEEKS FROM OFFER')  
+                        elif 'I Agree Terms' in elem.text:
+                            elem.find_element(css,'label').click()
+                    except:
+                        pass      
+            elif 'Self-Identification' in find(css,"div[class*='jobs-easy-apply-content']").text:
+                options=find(css,"div[class*='jobs-easy-apply-content']").find_elements(css,"select")
+                for x in options:
+                    if 'veteran' in x.text:
+                        x.find_element(css,"option[value*='Select an option']").click()
+                        x.find_element(css,"option[value*='I am not']").click()
+                    elif 'Race' in x.text:
+                        x.find_element(css,"option[value*='Select an option']").click()
+                        x.find_element(css,"option[value*='Asian']").click()
+                    elif 'Male' in x.text:
+                        x.find_element(css,"option[value*='Select an option']").click()
+                        x.find_element(css,"option[value*='Male']").click()
+                    elif 'Disability' in x.text:
+                        x.find_element(css,"option[value*='Select an option']").click()
+                        x.find_element(css,"option[value*='No']").click()
+                if finds(css, "button[aria-label*='Continue to next step']"):
+                    data.append(find(css, "div[class='jobs-easy-apply-content']").text)
+                    find(css, "[aria-label*='Continue to next step']").click()
+            elif finds(css, "button[aria-label*='Continue to next step']"):
+                data.append(
+                    find(css, "div[class='jobs-easy-apply-content']").text)
                 find(css, "[aria-label*='Continue to next step']").click()
-        elif finds(css, "button[aria-label*='Continue to next step']"):
-            find(css, "[aria-label*='Continue to next step']").click()
-        elif finds(css,"button[aria-label*='Review your application']"):
-            find(css,"button[aria-label*='Review your application']").click()
-        elif finds(css,"button[aria-label*='Submit application']"): 
-            if finds(css,"label[for*='follow-company']"):
-                find(css,"label[for*='follow-company']").click()
-            find(css,"button[aria-label*='Submit application']").click()
-            break
-    while True:
-        try:
-            find(css, "button[aria-label*='Dismiss']").click() 
-            break
-        except:
-            pass
+            elif finds(css,"button[aria-label*='Review your application']"):
+                data.append(
+                    find(css, "div[class='jobs-easy-apply-content']").text)
+                find(css,"button[aria-label*='Review your application']").click()
+            elif finds(css,"button[aria-label*='Submit application']"): 
+                data.append(
+                    find(css, "div[class='jobs-easy-apply-content']").text)
+                if finds(css,"label[for*='follow-company']"):
+                    find(css,"label[for*='follow-company']").click()
+                find(css,"button[aria-label*='Submit application']").click()
+                break
+        while True:
+            try:
+                find(css, "button[aria-label*='Dismiss']").click() 
+                break
+            except:
+                pass
+        return list(set(data[1:]))
+    except:
+        pass
 page=1
 while page<=40:
     time.sleep(2)
@@ -163,24 +176,11 @@ while page<=40:
         dict['Desc'].append(
             find(css, "div[class*='jobs-description']").text)
         dict['Salary Detail'].append(find(css, "div[id*='SALARY']").text)
+        if finds(css, "div[class*='jobs-apply-button--']"):
+            dict['Form Data'].append(apply_job())
+    dict['Form Data'] = [i for i in dict['Form Data'] if i != []]
     with open(path.format('data_eng_job_source_data.json'),'w') as f:
         json.dump(dict,f)
-    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-    easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
-    for r,i in enumerate(easy_apply):
-            element = jobs[r]
-            while True:
-                try:
-                    element.click()
-                    break
-                except:
-                    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-                    easy_apply=[i for i in jobs if 'Easy Apply' in i.text]
-                    element=easy_apply[r]
-            apply_job(i)    
     page+=1
     time.sleep(2)
     find(css,"li[data-test-pagination-page-btn='{}']".format(page)).click()
-
-
-
