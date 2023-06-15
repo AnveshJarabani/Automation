@@ -1,19 +1,20 @@
 import json,re
 import pandas as pd
 from collections import Counter
-import nltk
+import nltk,os
 from nltk import ngrams
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-path = r"C:\Users\ajarabani\Downloads\job automation\{}"
-data_dict=json.load(open(path.format('data_eng_job_source_data.json'),'r'))
+cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
+data_dict=json.load(open(os.path.join(cur_dir,'job_data.json'),'r'))
 # df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
+del data_dict['Form Data']
 df=pd.DataFrame(data_dict)
+print(df.columns)
 df['Salary'] = df['Salary Detail'].apply(
     lambda x: [i for i in x.split('\n') if '$' in i])
 df['Company'] = df['Company Detail'].apply(lambda x: x.split('\n')[1])
 df['Position'] = df['Details'].apply(lambda x: x.split('\n')[0])
-
 patrn=re.compile(r"\b\w+\b")
 nltk.download('stopwords')
 stop_words=set(stopwords.words('english'))
