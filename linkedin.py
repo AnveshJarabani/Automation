@@ -39,16 +39,18 @@ find(css, "input[id='session_key']").send_keys(
     json.load(open(path.format('encrypt.json'), 'r'))['username'])
 find(css,"input[id='session_password']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['password'])
 find(css,"button[data-id*='sign-in-form__submit-btn']").click()
-wait(driver,100).until(located((css,"[title*='Jobs']"))) 
-find(css,"[title*='Jobs']").click()
-wait(driver,25).until(located((css,"[id*='jobs-search-box-keyword']")))
-find(css,"[id*='jobs-search-box-keyword']").send_keys('data engineer\n')
-wait(driver,25).until(located((css,"[aria-label*='Easy Apply filter.']")))
-find(css,"button[aria-label*='Easy Apply filter.']").click()
-find(css,"button[aria-label*='Salary filter.']").click()
-find(css,"label[for*='V2-7']").click()
-time.sleep(.5)
-[i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
+driver.get('https://www.linkedin.com/jobs/collections/recommended/')
+
+# wait(driver,100).until(located((css,"[title*='Jobs']"))) 
+# find(css,"[title*='Jobs']").click()
+# wait(driver,25).until(located((css,"[id*='jobs-search-box-keyword']")))
+# find(css,"[id*='jobs-search-box-keyword']").send_keys('data engineer\n')
+# wait(driver,25).until(located((css,"[aria-label*='Easy Apply filter.']")))
+# find(css,"button[aria-label*='Easy Apply filter.']").click()
+# find(css,"button[aria-label*='Salary filter.']").click()
+# find(css,"label[for*='V2-7']").click()
+# time.sleep(.5)
+# [i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
 def select_yes(elem):
     try:
         elem.find_element(css,
@@ -156,7 +158,7 @@ while page<=40:
     jobs=finds(css,"li[class*='jobs-search-results__list-item']")
     driver.execute_script("arguments[0].scrollIntoView()",jobs[10])
     driver.execute_script("arguments[0].scrollIntoView()",jobs[-1])
-    with open(path.format('data_eng_job_source_data.json'),'r', encoding='utf-8') as f:
+    with open(path.format('job_data.json'),'r', encoding='utf-8') as f:
         dict=json.load(f)
     time.sleep(2)
     for r in range(len(jobs)):
@@ -177,7 +179,8 @@ while page<=40:
             find(css, "div[class*='jobs-description']").text)
         dict['Salary Detail'].append(find(css, "div[id*='SALARY']").text)
         if finds(css, "div[class*='jobs-apply-button--']"):
-            dict['Form Data'].append(apply_job())
+            if finds(css, "div[class*='jobs-apply-button--']")[0].text=='Easy Apply':
+                dict['Form Data'].append(apply_job())
     dict['Form Data'] = [i for i in dict['Form Data'] if i != []]
     with open(path.format('data_eng_job_source_data.json'),'w') as f:
         json.dump(dict,f)
