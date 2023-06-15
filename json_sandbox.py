@@ -1,6 +1,6 @@
-import json
-path = r'C:\Users\ajarabani\Downloads\job automation\{}'
-with open(path.format('job_data.json')) as f:
+import json,os
+cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
+with open(os.path.join(cur_dir,'job_data.json'),'r') as f:
     data = json.load(f)
 for i in data['Form Data']:
     for j in i:
@@ -15,6 +15,5 @@ for i in data['Form Data']:
             if 'City' in string:
                 indx=y.index(string)
                 print(y[indx])
-            
-
-
+for i in data['Desc']:
+        print(i)
