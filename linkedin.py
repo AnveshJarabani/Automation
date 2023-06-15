@@ -35,23 +35,21 @@ if len(elms)==0:
     time.sleep(2)
     driver.get('https://www.linkedin.com/')
 time.sleep(2)
-cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
-find(css, "input[id='session_key']").send_keys(
-    json.load(open(os.path.join(cur_dir,'encrypt.json'), 'r'))['username'])
+# path = r'C:\Users\ajarabani\Downloads\job automation\{}'  
+path = r"C:\Users\anves\Downloads\job automation\{}"
+find(css,"input[id='session_key']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['username'])
 find(css,"input[id='session_password']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['password'])
 find(css,"button[data-id*='sign-in-form__submit-btn']").click()
-driver.get('https://www.linkedin.com/jobs/collections/recommended/')
-
-# wait(driver,100).until(located((css,"[title*='Jobs']"))) 
-# find(css,"[title*='Jobs']").click()
-# wait(driver,25).until(located((css,"[id*='jobs-search-box-keyword']")))
-# find(css,"[id*='jobs-search-box-keyword']").send_keys('data engineer\n')
-# wait(driver,25).until(located((css,"[aria-label*='Easy Apply filter.']")))
-# find(css,"button[aria-label*='Easy Apply filter.']").click()
-# find(css,"button[aria-label*='Salary filter.']").click()
-# find(css,"label[for*='V2-7']").click()
-# time.sleep(.5)
-# [i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
+wait(driver,100).until(located((css,"[title*='Jobs']"))) 
+find(css,"[title*='Jobs']").click()
+wait(driver,25).until(located((css,"[id*='jobs-search-box-keyword']")))
+find(css,"[id*='jobs-search-box-keyword']").send_keys('data engineer\n')
+wait(driver,25).until(located((css,"[aria-label*='Easy Apply filter.']")))
+find(css,"button[aria-label*='Easy Apply filter.']").click()
+find(css,"button[aria-label*='Salary filter.']").click()
+find(css,"label[for*='V2-7']").click()
+time.sleep(0.5)
+[i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
 def select_yes(elem):
     try:
         elem.find_element(css,
@@ -66,12 +64,12 @@ def select_yes(elem):
 def apply_job():
     try:
         data=[]
-        time.sleep(2)
-        apply_buttons = finds(css, "div[class*='jobs-apply-button--']")
-        if len(apply_buttons)!=0:
-            apply_buttons[0].click()
-        else:
-            return
+        time.sleep(1)
+        finds(css, "div[class*='jobs-apply-button--']")[0].click()
+        # if len(apply_buttons)!=0:
+        #     apply_buttons[0].click()
+        # else:
+        #     return
         while True:
             if finds(css, 'div[aria-invalid="true"]'):
                 invalid_elms = finds(
@@ -166,7 +164,7 @@ while page<=40:
         driver.execute_script("arguments[0].scrollIntoView()", finds(
             css, "li[class*='jobs-search-results__list-item']")[r])
         finds(css, "li[class*='jobs-search-results__list-item']")[r].find_element(css,'a').click()
-        time.sleep(2)
+        time.sleep(1)
         if finds(css, "div[class*='jobs-company__box']"):
             print(find(css, "div[class*='jobs-company__box']").text.split('\n')[1])
             dict['Company Detail'].append(
