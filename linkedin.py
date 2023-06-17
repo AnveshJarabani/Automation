@@ -8,6 +8,7 @@ from selenium.webdriver.common.keys import Keys
 import os
 user='test_1124'
 passwrd='xsdf_~#@sdf'
+cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
 # Fetch a random proxy from ProxyMesh
 proxy_mesh_url = 'http://proxy.proxy-mesh.com:31280'  # Replace with the ProxyMesh URL
 proxy_mesh_proxy_list = ['proxy1.proxy-mesh.com:31280', 'proxy2.proxy-mesh.com:31280']  # Add more proxies if available
@@ -35,21 +36,14 @@ if len(elms)==0:
     time.sleep(2)
     driver.get('https://www.linkedin.com/')
 time.sleep(2)
-# path = r'C:\Users\ajarabani\Downloads\job automation\{}'  
-path = r"C:\Users\anves\Downloads\job automation\{}"
-find(css,"input[id='session_key']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['username'])
-find(css,"input[id='session_password']").send_keys(json.load(open(path.format('encrypt.json'),'r'))['password'])
+find(css,"input[id='session_key']").send_keys(json.load(open(os.path.join(cur_dir,'encrypt.json'),'r'))['username'])
+find(css,"input[id='session_password']").send_keys(json.load(open(os.path.join(cur_dir,'encrypt.json'),'r'))['password'])
 find(css,"button[data-id*='sign-in-form__submit-btn']").click()
-wait(driver,100).until(located((css,"[title*='Jobs']"))) 
-find(css,"[title*='Jobs']").click()
-wait(driver,25).until(located((css,"[id*='jobs-search-box-keyword']")))
-find(css,"[id*='jobs-search-box-keyword']").send_keys('data engineer\n')
-wait(driver,25).until(located((css,"[aria-label*='Easy Apply filter.']")))
-find(css,"button[aria-label*='Easy Apply filter.']").click()
-find(css,"button[aria-label*='Salary filter.']").click()
-find(css,"label[for*='V2-7']").click()
-time.sleep(0.5)
-[i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
+driver.get('https://www.linkedin.com/jobs/collections/recommended/')
+# find(css,"button[aria-label*='Salary filter.']").click()
+# find(css,"label[for*='V2-7']").click()
+# time.sleep(0.5)
+# [i for i in finds(css,"button[data-control-name*='filter_show_results']") if 'result' in i.text][0].click()
 def select_yes(elem):
     try:
         elem.find_element(css,
@@ -66,10 +60,6 @@ def apply_job():
         data=[]
         time.sleep(1)
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
-        # if len(apply_buttons)!=0:
-        #     apply_buttons[0].click()
-        # else:
-        #     return
         while True:
             if finds(css, 'div[aria-invalid="true"]'):
                 invalid_elms = finds(
@@ -84,8 +74,8 @@ def apply_job():
                             time.sleep(.5)
                         elif 'years' in elem.text:
                             elem.find_element(
-                            css, "input[type*='text']").send_keys(5)
-                        elif 'salary' in elem.text or 'pay' in elem.text or 'compensation' in elem.text:
+                            css, "input[type*='text']").send_keys(7)
+                        elif 'salary' in elem.text or 'Salary' in elem.text or 'pay' in elem.text or 'compensation' in elem.text:
                             elem.find_element(
                             css, "input[type*='text']").send_keys(190000)
                         elif 'Name\n' in elem.text:
@@ -154,35 +144,32 @@ def apply_job():
 page=1
 while page<=40:
     time.sleep(2)
-    jobs=finds(css,"li[class*='jobs-search-results__list-item']")
-    driver.execute_script("arguments[0].scrollIntoView()",jobs[10])
-    driver.execute_script("arguments[0].scrollIntoView()",jobs[-1])
     with open(os.path.join(cur_dir,'job_data.json'),'r', encoding='utf-8') as f:
-        dict=json.load(f)
+        cur_dict=json.load(f)
     time.sleep(2)
-    for r in range(len(jobs)):
+    for r in range(24):
         driver.execute_script("arguments[0].scrollIntoView()", finds(
             css, "li[class*='jobs-search-results__list-item']")[r])
         finds(css, "li[class*='jobs-search-results__list-item']")[r].find_element(css,'a').click()
         time.sleep(1)
         if finds(css, "div[class*='jobs-company__box']"):
             print(find(css, "div[class*='jobs-company__box']").text.split('\n')[1])
-            dict['Company Detail'].append(
+            cur_dict['Company Detail'].append(
             find(css, "div[class*='jobs-company__box']").text)
         else:
             print('No Company Detail Found')
-            dict['Company Detail'].append('No Company Detail Found')
-        dict['Details'].append(
+            cur_dict['Company Detail'].append('No Company Detail Found')
+        cur_dict['Details'].append(
             find(css, "div[class*='jobs-unified-top-card__content--two-pane']").text)
-        dict['Desc'].append(
+        cur_dict['Desc'].append(
             find(css, "div[class*='jobs-description']").text)
-        dict['Salary Detail'].append(find(css, "div[id*='SALARY']").text)
+        cur_dict['Salary Detail'].append(find(css, "div[id*='SALARY']").text)
         if finds(css, "div[class*='jobs-apply-button--']"):
             if finds(css, "div[class*='jobs-apply-button--']")[0].text=='Easy Apply':
-                dict['Form Data'].append(apply_job())
-    dict['Form Data'] = [i for i in dict['Form Data'] if i != []]
+                cur_dict['Form Data'].append(apply_job())
+    cur_dict['Form Data'] = [i for i in cur_dict['Form Data'] if i != []]
     with open(os.path.join(cur_dir,'job_data.json'),'w') as f:
-        json.dump(dict,f)
+        json.dump(cur_dict,f)
     page+=1
     time.sleep(2)
     find(css,"li[data-test-pagination-page-btn='{}']".format(page)).click()
