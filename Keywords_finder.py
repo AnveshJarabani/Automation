@@ -9,11 +9,13 @@ cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
 data_dict=json.load(open(os.path.join(cur_dir,'job_data.json'),'r'))
 # df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
 del data_dict['Form Data']
+data_dict['Salary Detail'].extend(['\n\n']*(len(data_dict['Company Detail'])-len(data_dict['Salary Detail'])))
 df=pd.DataFrame(data_dict)
 print(df.columns)
 df['Salary'] = df['Salary Detail'].apply(
     lambda x: [i for i in x.split('\n') if '$' in i])
-df['Company'] = df['Company Detail'].apply(lambda x: x.split('\n')[1])
+df['Company'] = df['Company Detail'].apply(lambda x: x.split('\n')[1]
+                                           if len(x.split('\n'))>1 else '')
 df['Position'] = df['Details'].apply(lambda x: x.split('\n')[0])
 patrn=re.compile(r"\b\w+\b")
 nltk.download('stopwords')
@@ -27,6 +29,13 @@ for i in df['Desc']:
 phrase_frequencies=Counter(filterd_phrases)
 keywords={'word':[i for i,_ in phrase_frequencies.items()],
           'freq':[i for _,i in phrase_frequencies.items()]}
+lst=[]
+for i in keywords['word']:
+    v=''
+    for j in i:
+        v+=j+' '
+    lst.append(v.strip())
+keywords['word']=lst
 df_phrases=pd.DataFrame(keywords)
 df_phrases=df_phrases.sort_values(by='freq',ascending=False,ignore_index=True)
 print(df_phrases.head(100))
