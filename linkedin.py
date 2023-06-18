@@ -56,7 +56,7 @@ def apply_job():
             "sponsorship",
             "vaccinated",
             "w2",
-        ]
+        ] 
         time.sleep(1)
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
         while True:
