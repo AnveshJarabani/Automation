@@ -6,25 +6,10 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType as pt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import os
+
 cur_dir = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
-user = "test_1124"
-passwrd = "xsdf_~#@sdf"
-# Fetch a random proxy from ProxyMesh
-proxy_mesh_url = "http://proxy.proxy-mesh.com:31280"
-# Replace with the ProxyMesh URL
-proxy_mesh_proxy_list = [
-    "proxy1.proxy-mesh.com:31280",
-    "proxy2.proxy-mesh.com:31280",
-]
-random_proxy = random.choice(proxy_mesh_proxy_list)
-# Configure the proxy server
-proxy = Proxy()
-proxy.proxy_type = pt.MANUAL
-proxy.http_proxy = f"{user}:{passwrd}@{random_proxy}"
-proxy.ssl_proxy = f"{user}:{passwrd}@{random_proxy}"
 chromeOptions = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chromeOptions)
-# driver.implicitly_wait(5)
 css = By.CSS_SELECTOR
 find = driver.find_element
 finds = driver.find_elements
@@ -70,7 +55,7 @@ def apply_job():
                 invalid_elms = finds(css, 'div[aria-invalid="true"]')
                 for elem in invalid_elms:
                     try:
-                        if "City" in elem.text:
+                        if "City" in elem.text.lower():
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Chandler, Arizona, United States"
                             )
@@ -79,44 +64,46 @@ def apply_job():
                                 Keys.TAB
                             )
                             time.sleep(0.5)
-                        elif "years" in elem.text:
+                        elif "years" in elem.text.lower():
                             elem.find_element(css, "input[type*='text']").send_keys(7)
                         elif (
-                            "salary" in elem.text
-                            or "Salary" in elem.text
-                            or "pay" in elem.text
-                            or "compensation" in elem.text
+                            "salary" in elem.text.lower()
+                            or "pay" in elem.text.lower()
+                            or "compensation" in elem.text.lower()
                         ):
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 190000
                             )
-                        elif "Name\n" in elem.text:
+                        elif "name\n" in elem.text.lower():
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Anvesh Jarabani"
                             )
-                        elif "commut" in elem.text:
-                            select_yes(elem)
-                        elif "Do you have" in elem.text and "experience" in elem.text:
+                        elif "commut" in elem.text.lower():
                             select_yes(elem)
                         elif (
-                            "eligible to work" in elem.text
-                            or "authorized to work" in elem.text
+                            "do you have" in elem.text.lower()
+                            and "experience" in elem.text.lower()
                         ):
                             select_yes(elem)
-                        elif "sponsorship" in elem.text or "Sponsorship" in elem.text:
+                        elif (
+                            "eligible to work" in elem.text.lower()
+                            or "authorized to work" in elem.text.lower()
+                        ):
                             select_yes(elem)
-                        elif "How did you hear" in elem.text:
+                        elif "sponsorship" in elem.text.lower():
+                            select_yes(elem)
+                        elif "how did you hear" in elem.text.lower():
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Linkedin"
                             )
                         elif (
-                            "you able to begin" in elem.text
-                            or "When can you start" in elem.text
+                            "you able to begin" in elem.text.lower()
+                            or "when can you start" in elem.text.lower()
                         ):
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "2 WEEKS FROM OFFER"
                             )
-                        elif "I Agree Terms" in elem.text:
+                        elif "i agree terms" in elem.text.lower():
                             elem.find_element(css, "label").click()
                     except:
                         pass
@@ -128,16 +115,16 @@ def apply_job():
                     css, "div[class*='jobs-easy-apply-content']"
                 ).find_elements(css, "select")
                 for x in options:
-                    if "veteran" in x.text:
+                    if "veteran" in x.text.lower():
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='I am not']").click()
-                    elif "Race" in x.text:
+                    elif "race" in x.text.lower():
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='Asian']").click()
-                    elif "Male" in x.text:
+                    elif "male" in x.text.lower():
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='Male']").click()
-                    elif "Disability" in x.text:
+                    elif "disability" in x.text.lower():
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='No']").click()
                 if finds(css, "button[aria-label*='Continue to next step']"):
