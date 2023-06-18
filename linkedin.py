@@ -6,7 +6,6 @@ from selenium.webdriver.common.proxy import Proxy, ProxyType as pt
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import os
-
 cur_dir = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 user = "test_1124"
 passwrd = "xsdf_~#@sdf"
@@ -173,7 +172,7 @@ while page <= 40:
     with open(os.path.join(cur_dir, "job_data.json"), "r", encoding="utf-8") as f:
         cur_dict = json.load(f)
     time.sleep(2)
-    for r in range(24):
+    for r in range(23):
         driver.execute_script(
             "arguments[0].scrollIntoView()",
             finds(css, "li[class*='jobs-search-results__list-item']")[r],
