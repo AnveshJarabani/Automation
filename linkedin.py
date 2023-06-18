@@ -32,17 +32,19 @@ find(css, "button[data-id*='sign-in-form__submit-btn']").click()
 driver.get("https://www.linkedin.com/jobs/collections/recommended/")
 
 
-def select_yes(elem):
+def select(elem, selection):
     try:
         elem.find_element(
-            css, "label[data-test-text-selectable-option__label='Yes']"
+            css, f"label[data-test-text-selectable-option__label={selection}]"
         ).click()
     except:
         try:
             elem.find_element(css, "select[id*='text-entity']").click()
-            elem.find_element(css, "option[value*='Yes']").click()
+            elem.find_element(css, f"option[value*={selection}]").click()
         except:
-            elem.find_element(css, "input[type*='text']").send_keys("Yes")
+            elem.find_element(css, "input[type*='text']").send_keys(selection)
+            time.sleep(0.5)
+            elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
 
 
 def apply_job():
@@ -64,7 +66,7 @@ def apply_job():
                                 Keys.TAB
                             )
                             time.sleep(0.5)
-                        elif "years" in elem.text.lower():
+                        elif "how many year" in elem.text.lower():
                             elem.find_element(css, "input[type*='text']").send_keys(7)
                         elif (
                             "salary" in elem.text.lower()
@@ -79,23 +81,27 @@ def apply_job():
                                 "Anvesh Jarabani"
                             )
                         elif "commut" in elem.text.lower():
-                            select_yes(elem)
+                            select(elem, "Yes")
                         elif (
                             "do you have" in elem.text.lower()
                             and "experience" in elem.text.lower()
                         ):
-                            select_yes(elem)
+                            select(elem, "Yes")
                         elif (
                             "eligible to work" in elem.text.lower()
                             or "authorized to work" in elem.text.lower()
                         ):
-                            select_yes(elem)
+                            select(elem, "Yes")
                         elif "sponsorship" in elem.text.lower():
-                            select_yes(elem)
+                            select(elem, "Yes")
                         elif "how did you hear" in elem.text.lower():
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Linkedin"
                             )
+                        elif "c2c" in elem.text.lower():
+                            select(elem, "No")
+                        elif "vaccinated" in elem.text.lower():
+                            select(elem, "Yes")
                         elif (
                             "you able to begin" in elem.text.lower()
                             or "when can you start" in elem.text.lower()
@@ -152,6 +158,8 @@ def apply_job():
     except:
         pass
 
+
+# are you vaccinated? and c2c?
 
 page = 1
 while page <= 40:
