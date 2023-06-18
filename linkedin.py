@@ -1,8 +1,6 @@
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
-import json, time, random
-from selenium.webdriver.common.proxy import Proxy, ProxyType as pt
+import json, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import os
@@ -50,6 +48,15 @@ def select(elem, selection):
 def apply_job():
     try:
         data = []
+        yes_words = [
+            "commut",
+            "do you have experience",
+            "eligible to work",
+            "authorized to work",
+            "sponsorship",
+            "vaccinated",
+            "w2",
+        ]
         time.sleep(1)
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
         while True:
@@ -57,7 +64,8 @@ def apply_job():
                 invalid_elms = finds(css, 'div[aria-invalid="true"]')
                 for elem in invalid_elms:
                     try:
-                        if "City" in elem.text.lower():
+                        phrase = elem.text.lower()
+                        if "city" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Chandler, Arizona, United States"
                             )
@@ -66,50 +74,36 @@ def apply_job():
                                 Keys.TAB
                             )
                             time.sleep(0.5)
-                        elif "how many year" in elem.text.lower():
+                        elif "how many year" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(7)
                         elif (
-                            "salary" in elem.text.lower()
-                            or "pay" in elem.text.lower()
-                            or "compensation" in elem.text.lower()
+                            "salary" in phrase
+                            or "pay" in phrase
+                            or "compensation" in phrase
                         ):
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 190000
                             )
-                        elif "name\n" in elem.text.lower():
+                        elif "name\n" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Anvesh Jarabani"
                             )
-                        elif "commut" in elem.text.lower():
+                        elif any(i in phrase for i in yes_words):
                             select(elem, "Yes")
-                        elif (
-                            "do you have" in elem.text.lower()
-                            and "experience" in elem.text.lower()
-                        ):
-                            select(elem, "Yes")
-                        elif (
-                            "eligible to work" in elem.text.lower()
-                            or "authorized to work" in elem.text.lower()
-                        ):
-                            select(elem, "Yes")
-                        elif "sponsorship" in elem.text.lower():
-                            select(elem, "Yes")
-                        elif "how did you hear" in elem.text.lower():
+                        elif "c2c" in phrase:
+                            select(elem, "No")
+                        elif "how did you hear" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "Linkedin"
                             )
-                        elif "c2c" in elem.text.lower():
-                            select(elem, "No")
-                        elif "vaccinated" in elem.text.lower():
-                            select(elem, "Yes")
                         elif (
-                            "you able to begin" in elem.text.lower()
-                            or "when can you start" in elem.text.lower()
+                            "you able to begin" in phrase
+                            or "when can you start" in phrase
                         ):
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "2 WEEKS FROM OFFER"
                             )
-                        elif "i agree terms" in elem.text.lower():
+                        elif "i agree terms" in phrase:
                             elem.find_element(css, "label").click()
                     except:
                         pass
@@ -121,16 +115,17 @@ def apply_job():
                     css, "div[class*='jobs-easy-apply-content']"
                 ).find_elements(css, "select")
                 for x in options:
-                    if "veteran" in x.text.lower():
+                    msg = x.text.lower()
+                    if "veteran" in msg:
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='I am not']").click()
-                    elif "race" in x.text.lower():
+                    elif "race" in msg:
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='Asian']").click()
-                    elif "male" in x.text.lower():
+                    elif "male" in msg:
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='Male']").click()
-                    elif "disability" in x.text.lower():
+                    elif "disability" in msg:
                         x.find_element(css, "option[value*='Select an option']").click()
                         x.find_element(css, "option[value*='No']").click()
                 if finds(css, "button[aria-label*='Continue to next step']"):
@@ -158,8 +153,6 @@ def apply_job():
     except:
         pass
 
-
-# are you vaccinated? and c2c?
 
 page = 1
 while page <= 40:
@@ -197,4 +190,4 @@ while page <= 40:
         json.dump(cur_dict, f)
     page += 1
     time.sleep(2)
-    find(css, "li[data-test-pagination-page-btn='{}']".format(page)).click()
+    find(css, f"li[data-test-pagination-page-btn='{page}']").click()
