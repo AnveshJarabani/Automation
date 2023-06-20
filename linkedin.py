@@ -1,4 +1,5 @@
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
 import json, time
 from selenium import webdriver
@@ -20,14 +21,28 @@ if len(elms) == 0:
     time.sleep(2)
     driver.get("https://www.linkedin.com/")
 time.sleep(2)
-find(css, "input[id='session_key']").send_keys(
-    json.load(open(os.path.join(cur_dir, "encrypt.json"), "r"))["username"]
-)
-find(css, "input[id='session_password']").send_keys(
-    json.load(open(os.path.join(cur_dir, "encrypt.json"), "r"))["password"]
-)
+encrypt = json.load(open(os.path.join(cur_dir, "encrypt.json"), "r"))
+find(css, "input[id='session_key']").send_keys(encrypt["username"])
+find(css, "input[id='session_password']").send_keys(encrypt["password"])
 find(css, "button[data-id*='sign-in-form__submit-btn']").click()
-driver.get("https://www.linkedin.com/jobs/collections/recommended/")
+# ! USE BELOW LINE FOR RECOMMENDED JOBS ONLY _________________________________
+# driver.get("https://www.linkedin.com/jobs/collections/recommended/")
+
+#!SELECTING DATA ENGINEER/ 165K+ ROLES ONLY ___________________________________
+wait(driver, 10).until(located((css, "[title*='Jobs']")))
+find(css, "[title*='Jobs']").click()
+wait(driver, 25).until(located((css, "[id*='jobs-search-box-keyword']")))
+find(css, "[id*='jobs-search-box-keyword']").send_keys("data engineer\n")
+wait(driver, 25).until(located((css, "[aria-label*='Easy Apply filter.']")))
+find(css, "button[aria-label*='Salary filter.']").click()
+find(css, "label[for*='V2-7']").click()
+time.sleep(0.5)
+[
+    i
+    for i in finds(css, "button[data-control-name*='filter_show_results']")
+    if "result" in i.text
+][0].click()
+# ! ________________________________________________________________
 
 
 def select(elem, selection):
@@ -45,18 +60,20 @@ def select(elem, selection):
             elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
 
 
-def apply_job():
+yes_words = [
+    "commut",
+    "do you have experience",
+    "eligible to work",
+    "authorized to work",
+    "sponsorship",
+    "vaccinated",
+    "w2",
+]
+
+
+def easy_apply():
     try:
         data = []
-        yes_words = [
-            "commut",
-            "do you have experience",
-            "eligible to work",
-            "authorized to work",
-            "sponsorship",
-            "vaccinated",
-            "w2",
-        ]
         time.sleep(1)
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
         while True:
@@ -154,6 +171,30 @@ def apply_job():
         pass
 
 
+def apply():
+    try:
+        finds(css, "div[class*='jobs-apply-button--']")[0].click()
+        time.sleep(0.5)
+        driver.switch_to.window(driver.window_handles[1])
+        driver.close()
+        resume_path = encrypt["resume_path"]
+        find(css, "input[id*='resume']").send_keys(resume_path)
+        find(css, "input[name*='name']").send_keys(encrypt["name"])
+        find(css, "input[name*='email']").send_keys(encrypt["email"])
+        find(css, "input[name*='Phone']").send_keys(encrypt["phone"])
+        find(css, "input[name*='company']").send_keys(encrypt["Company"])
+        find(css, "input[name*='Linkedin']").send_keys(encrypt["Linkedin url"])
+        find(css, "input[name*='GitHub']").send_keys(encrypt["github url"])
+        find(css, "div:contains('salary')").find(css, "input").send_keys(
+            encrypt["salary"]
+        )
+        for i in yes_words:
+            if finds(css, f"div:contains('{i}')"):
+                select(find(css, f"div:contains('{i}')"), "Yes")
+    except:
+        return
+
+
 page = 1
 while page <= 40:
     time.sleep(2)
@@ -184,7 +225,9 @@ while page <= 40:
         cur_dict["Salary Detail"].append(find(css, "div[id*='SALARY']").text)
         if finds(css, "div[class*='jobs-apply-button--']"):
             if finds(css, "div[class*='jobs-apply-button--']")[0].text == "Easy Apply":
-                cur_dict["Form Data"].append(apply_job())
+                cur_dict["Form Data"].append(easy_apply())
+            else:
+                cur_dict["Form Data"].append(apply())
     cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
     with open(os.path.join(cur_dir, "job_data.json"), "w") as f:
         json.dump(cur_dict, f)
