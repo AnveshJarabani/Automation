@@ -176,7 +176,8 @@ def apply():
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
         time.sleep(0.5)
         driver.switch_to.window(driver.window_handles[1])
-        driver.close()
+        if finds(css, "button[id*='linkedin']"):
+            finds(css, "button[id*='linkedin']")[0].click()
         resume_path = encrypt["resume_path"]
         find(css, "input[id*='resume']").send_keys(resume_path)
         find(css, "input[name*='name']").send_keys(encrypt["name"])
@@ -192,6 +193,8 @@ def apply():
             if finds(css, f"div:contains('{i}')"):
                 select(find(css, f"div:contains('{i}')"), "Yes")
     except:
+        driver.close()
+        driver.switch_to.window(driver.window_handles[0])
         return
 
 
