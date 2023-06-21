@@ -10,6 +10,7 @@ cur_dir = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 chromeOptions = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chromeOptions)
 css = By.CSS_SELECTOR
+xpath = By.XPATH
 find = driver.find_element
 finds = driver.find_elements
 located = EC.presence_of_all_elements_located
@@ -41,7 +42,7 @@ time.sleep(0.5)
     i
     for i in finds(css, "button[data-control-name*='filter_show_results']")
     if "result" in i.text
-][0].click()
+][0].click() 
 # ! ________________________________________________________________
 
 
@@ -171,14 +172,32 @@ def easy_apply():
         pass
 
 
-def apply():
+def pop_apply():
     try:
+        resume_path = encrypt["resume_path"]
+        keys=list(encrypt.keys())
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
         time.sleep(0.5)
         driver.switch_to.window(driver.window_handles[1])
+        page_list=finds(xpath,".//*")
+        inputs=[i for i in page_list if i.text.lower() in keys]
+        for el in inputs:
+            parent=el.find_element(xpath,"..")
+            parent.find_elements(css,"input").send_keys(encrypt[el.text.lower()])
+                        
+                    
+                    
+                    
+                    
+                    
         if finds(css, "button[id*='linkedin']"):
             finds(css, "button[id*='linkedin']")[0].click()
-        resume_path = encrypt["resume_path"]
+        page_list=finds()
+        if finds(css,"input[placeholder*='First Name']"):
+            finds(css, "input[placeholder*='First Name']")[0].send_keys(encrypt["first name"])
+        if finds(css,"input[placeholder*='Last Name']"):
+            finds(css, "input[placeholder*='Last Name']")[0].send_keys(encrypt["last name"])
+        
         find(css, "input[id*='resume']").send_keys(resume_path)
         find(css, "input[name*='name']").send_keys(encrypt["name"])
         find(css, "input[name*='email']").send_keys(encrypt["email"])
@@ -204,7 +223,7 @@ while page <= 40:
     with open(os.path.join(cur_dir, "job_data.json"), "r", encoding="utf-8") as f:
         cur_dict = json.load(f)
     time.sleep(2)
-    for r in range(23):
+    for r in range(24):
         driver.execute_script(
             "arguments[0].scrollIntoView()",
             finds(css, "li[class*='jobs-search-results__list-item']")[r],
@@ -230,10 +249,12 @@ while page <= 40:
             if finds(css, "div[class*='jobs-apply-button--']")[0].text == "Easy Apply":
                 cur_dict["Form Data"].append(easy_apply())
             else:
-                cur_dict["Form Data"].append(apply())
-    cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
-    with open(os.path.join(cur_dir, "job_data.json"), "w") as f:
-        json.dump(cur_dict, f)
+                cur_dict["Form Data"].append(pop_apply())
+        cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
+        for i in list(cur_dict.keys())[:-1]:
+            cur_dict[i]=list(set(cur_dict[i]))
+        with open(os.path.join(cur_dir, "job_data.json"), "w") as f:
+            json.dump(cur_dict, f)
     page += 1
     time.sleep(2)
     find(css, f"li[data-test-pagination-page-btn='{page}']").click()

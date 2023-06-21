@@ -9,7 +9,9 @@ cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
 data_dict=json.load(open(os.path.join(cur_dir,'job_data.json'),'r'))
 # df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
 del data_dict['Form Data']
-data_dict['Salary Detail'].extend(['\n\n']*(len(data_dict['Company Detail'])-len(data_dict['Salary Detail'])))
+keys=list(data_dict.keys())
+for i in keys:
+    data_dict[i].extend(['\n\n']*(len(data_dict['Details'])-len(data_dict[i])))
 df=pd.DataFrame(data_dict)
 print(df.columns)
 df['Salary'] = df['Salary Detail'].apply(
@@ -24,7 +26,8 @@ filterd_phrases=[]
 for i in df['Desc']:
     words=patrn.findall(i.lower())
     filterd_words=[wrd for wrd in words if wrd not in stop_words]
-    phrases=list(ngrams(filterd_words,2)) # generate 2 word phrases
+    #! change phrase count as needed
+    phrases=list(ngrams(filterd_words,1)) # generate 2 word phrases 
     filterd_phrases.extend(phrases)
 phrase_frequencies=Counter(filterd_phrases)
 keywords={'word':[i for i,_ in phrase_frequencies.items()],
@@ -40,6 +43,8 @@ df_phrases=pd.DataFrame(keywords)
 df_phrases=df_phrases.sort_values(by='freq',ascending=False,ignore_index=True)
 print(df_phrases.head(100))
 # df_phrases.to_csv(path.format('key_phrases.csv'),index=False)
+
+
 """
 1. FIND THE TOP 25 KEYWORDS WITH THE FREQUENCY FROM Desc
 2. EXTRACT COMPANY NAMES, LOCATION, SALARY RANGE. 
