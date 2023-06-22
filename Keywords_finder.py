@@ -5,8 +5,7 @@ import nltk,os
 from nltk import ngrams
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
-cur_dir=os.path.realpath(os.path.join(os.getcwd(),os.path.dirname(__file__)))
-data_dict=json.load(open(os.path.join(cur_dir,'job_data.json'),'r'))
+data_dict=json.load(open('../job automation/job_data.json','r'))
 # df_lst=[pd.DataFrame(i,index=[0]) for i in data_dict]
 del data_dict['Form Data']
 keys=list(data_dict.keys())

@@ -5,7 +5,6 @@ import json, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import os
-
 cur_dir = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 chromeOptions = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chromeOptions)
