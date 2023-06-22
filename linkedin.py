@@ -6,7 +6,6 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import os
 
-cur_dir = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
 chromeOptions = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chromeOptions)
 css = By.CSS_SELECTOR
@@ -22,7 +21,7 @@ if len(elms) == 0:
     time.sleep(2)
     driver.get("https://www.linkedin.com/")
 time.sleep(2)
-encrypt = json.load(open(os.path.join(cur_dir, "encrypt.json"), "r"))
+encrypt = json.load(open("./encrypt.json", "r"))
 find(css, "input[id='session_key']").send_keys(encrypt["username"])
 find(css, "input[id='session_password']").send_keys(encrypt["password"])
 find(css, "button[data-id*='sign-in-form__submit-btn']").click()
@@ -35,14 +34,16 @@ find(css, "[title*='Jobs']").click()
 wait(driver, 25).until(located((css, "[id*='jobs-search-box-keyword']")))
 find(css, "[id*='jobs-search-box-keyword']").send_keys("data engineer\n")
 wait(driver, 25).until(located((css, "[aria-label*='Easy Apply filter.']")))
+find(css, "[aria-label*='Easy Apply filter.']").click()  # EASY APPLY FILTER
+time.sleep(2)
 find(css, "button[aria-label*='Salary filter.']").click()
 find(css, "label[for*='V2-7']").click()
-time.sleep(0.5)
+time.sleep(2)
 [
     i
     for i in finds(css, "button[data-control-name*='filter_show_results']")
     if "result" in i.text
-][0].click() 
+][0].click()
 # ! ________________________________________________________________
 
 
@@ -175,29 +176,32 @@ def easy_apply():
 def pop_apply():
     try:
         resume_path = encrypt["resume_path"]
-        keys=list(encrypt.keys())
+        keys = list(encrypt.keys())
         finds(css, "div[class*='jobs-apply-button--']")[0].click()
         time.sleep(0.5)
         driver.switch_to.window(driver.window_handles[1])
-        page_list=finds(xpath,".//*")
-        inputs=[i for i in page_list if i.text.lower() in keys]
+        page_list = finds(xpath, ".//*")
+
+        for i in len([i for i in page_list if "apply" in i.text.lower()]):
+            print(i.tag_name)
+
+        inputs = [i for i in page_list if i.text.lower() in keys]
         for el in inputs:
-            parent=el.find_element(xpath,"..")
-            parent.find_elements(css,"input").send_keys(encrypt[el.text.lower()])
-                        
-                    
-                    
-                    
-                    
-                    
+            parent = el.find_element(xpath, "..")
+            parent.find_elements(css, "input").send_keys(encrypt[el.text.lower()])
+
         if finds(css, "button[id*='linkedin']"):
             finds(css, "button[id*='linkedin']")[0].click()
-        page_list=finds()
-        if finds(css,"input[placeholder*='First Name']"):
-            finds(css, "input[placeholder*='First Name']")[0].send_keys(encrypt["first name"])
-        if finds(css,"input[placeholder*='Last Name']"):
-            finds(css, "input[placeholder*='Last Name']")[0].send_keys(encrypt["last name"])
-        
+        page_list = finds()
+        if finds(css, "input[placeholder*='First Name']"):
+            finds(css, "input[placeholder*='First Name']")[0].send_keys(
+                encrypt["first name"]
+            )
+        if finds(css, "input[placeholder*='Last Name']"):
+            finds(css, "input[placeholder*='Last Name']")[0].send_keys(
+                encrypt["last name"]
+            )
+
         find(css, "input[id*='resume']").send_keys(resume_path)
         find(css, "input[name*='name']").send_keys(encrypt["name"])
         find(css, "input[name*='email']").send_keys(encrypt["email"])
@@ -220,7 +224,7 @@ def pop_apply():
 page = 1
 while page <= 40:
     time.sleep(2)
-    with open(os.path.join(cur_dir, "job_data.json"), "r", encoding="utf-8") as f:
+    with open("./job_data.json", "r", encoding="utf-8") as f:
         cur_dict = json.load(f)
     time.sleep(2)
     for r in range(24):
@@ -244,6 +248,7 @@ while page <= 40:
             find(css, "div[class*='jobs-unified-top-card__content--two-pane']").text
         )
         cur_dict["Desc"].append(find(css, "div[class*='jobs-description']").text)
+
         cur_dict["Salary Detail"].append(find(css, "div[id*='SALARY']").text)
         if finds(css, "div[class*='jobs-apply-button--']"):
             if finds(css, "div[class*='jobs-apply-button--']")[0].text == "Easy Apply":
@@ -252,8 +257,8 @@ while page <= 40:
                 cur_dict["Form Data"].append(pop_apply())
         cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
         for i in list(cur_dict.keys())[:-1]:
-            cur_dict[i]=list(set(cur_dict[i]))
-        with open(os.path.join(cur_dir, "job_data.json"), "w") as f:
+            cur_dict[i] = list(set(cur_dict[i]))
+        with open("./job_data.json", "w") as f:
             json.dump(cur_dict, f)
     page += 1
     time.sleep(2)
