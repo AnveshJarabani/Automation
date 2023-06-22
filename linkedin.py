@@ -228,38 +228,47 @@ while page <= 40:
         cur_dict = json.load(f)
     time.sleep(2)
     for r in range(24):
-        driver.execute_script(
-            "arguments[0].scrollIntoView()",
-            finds(css, "li[class*='jobs-search-results__list-item']")[r],
-        )
-        finds(css, "li[class*='jobs-search-results__list-item']")[r].find_element(
-            css, "a"
-        ).click()
-        time.sleep(1)
-        if finds(css, "div[class*='jobs-company__box']"):
-            print(find(css, "div[class*='jobs-company__box']").text.split("\n")[1])
-            cur_dict["Company Detail"].append(
-                find(css, "div[class*='jobs-company__box']").text
+        try:
+            driver.execute_script(
+                "arguments[0].scrollIntoView()",
+                finds(css, "li[class*='jobs-search-results__list-item']")[r],
             )
-        else:
-            print("No Company Detail Found")
-            cur_dict["Company Detail"].append("No Company Detail Found")
-        cur_dict["Details"].append(
-            find(css, "div[class*='jobs-unified-top-card__content--two-pane']").text
-        )
-        cur_dict["Desc"].append(find(css, "div[class*='jobs-description']").text)
-
-        cur_dict["Salary Detail"].append(find(css, "div[id*='SALARY']").text)
-        if finds(css, "div[class*='jobs-apply-button--']"):
-            if finds(css, "div[class*='jobs-apply-button--']")[0].text == "Easy Apply":
-                cur_dict["Form Data"].append(easy_apply())
+            finds(css, "li[class*='jobs-search-results__list-item']")[r].find_element(
+                css, "a"
+            ).click()
+            time.sleep(1)
+            if finds(css, "div[class*='jobs-company__box']"):
+                cur_dict["Company Detail"].append(
+                    find(css, "div[class*='jobs-company__box']").text
+                )
             else:
-                cur_dict["Form Data"].append(pop_apply())
-        cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
-        for i in list(cur_dict.keys())[:-1]:
-            cur_dict[i] = list(set(cur_dict[i]))
-        with open("./job_data.json", "w") as f:
-            json.dump(cur_dict, f)
+                print("No Company Detail Found")
+                cur_dict["Company Detail"].append("No Company Detail Found")
+            cur_dict["Details"].append(
+                find(css, "div[class*='jobs-unified-top-card__content--two-pane']").text
+            )
+            cur_dict["Desc"].append(find(css, "div[class*='jobs-description']").text)
+
+            cur_dict["Salary Detail"].append(find(css, "div[id*='SALARY']").text)
+            print(
+                [
+                    cur_dict["Company Detail"][-1].split("\n")[1],
+                    [i for i in cur_dict["Salary Detail"][-1].split("\n") if "$" in i][0],
+                ]
+            )
+
+            if finds(css, "div[class*='jobs-apply-button--']"):
+                if finds(css, "div[class*='jobs-apply-button--']")[0].text == "Easy Apply":
+                    cur_dict["Form Data"].append(easy_apply())
+                else:
+                    cur_dict["Form Data"].append(pop_apply())
+            cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
+            for i in list(cur_dict.keys())[:-1]:
+                cur_dict[i] = list(set(cur_dict[i]))
+            with open("./job_data.json", "w") as f:
+                json.dump(cur_dict, f)
+        except Exception as e:
+            print(e)
     page += 1
     time.sleep(2)
     find(css, f"li[data-test-pagination-page-btn='{page}']").click()

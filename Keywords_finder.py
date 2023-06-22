@@ -7,6 +7,14 @@ from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
 data_dict = json.load(open("./job_data.json", "r"))
+
+
+list(data_dict)
+print(data_dict['Salary Detail'][10].split("\n")[7])
+print(data_dict['Salary Detail'][400].split("\n")[7])
+
+
+
 del data_dict["Form Data"]
 keys = list(data_dict.keys())
 for i in keys:
