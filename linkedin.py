@@ -253,12 +253,17 @@ while page <= 40:
             print(
                 [
                     cur_dict["Company Detail"][-1].split("\n")[1],
-                    [i for i in cur_dict["Salary Detail"][-1].split("\n") if "$" in i][0],
+                    [i for i in cur_dict["Salary Detail"][-1].split("\n") if "$" in i][
+                        0
+                    ],
                 ]
             )
 
             if finds(css, "div[class*='jobs-apply-button--']"):
-                if finds(css, "div[class*='jobs-apply-button--']")[0].text == "Easy Apply":
+                if (
+                    finds(css, "div[class*='jobs-apply-button--']")[0].text
+                    == "Easy Apply"
+                ):
                     cur_dict["Form Data"].append(easy_apply())
                 else:
                     cur_dict["Form Data"].append(pop_apply())
