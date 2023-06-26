@@ -21,7 +21,7 @@ if len(elms) == 0:
     time.sleep(2)
     driver.get("https://www.linkedin.com/")
 time.sleep(2)
-encrypt = json.load(open("./encrypt.json", "r"))
+encrypt = json.load(open("../PYTHON/PRIVATE/encrypt.json", "r"))
 find(css, "input[id='session_key']").send_keys(encrypt["username"])
 find(css, "input[id='session_password']").send_keys(encrypt["password"])
 find(css, "button[data-id*='sign-in-form__submit-btn']").click()
@@ -71,7 +71,27 @@ yes_words = [
     "vaccinated",
     "w2",
 ]
-
+def fill_self_identification(data):
+    options = find(
+                    css, "div[class*='jobs-easy-apply-content']"
+                ).find_elements(css, "select")
+    for x in options:
+        msg = x.text.lower()
+        if "veteran" in msg:
+            x.find_element(css, "option[value*='Select an option']").click()
+            x.find_element(css, "option[value*='I am not']").click()
+        elif "race" in msg:
+            x.find_element(css, "option[value*='Select an option']").click()
+            x.find_element(css, "option[value*='Asian']").click()
+        elif "male" in msg:
+            x.find_element(css, "option[value*='Select an option']").click()
+            x.find_element(css, "option[value*='Male']").click()
+        elif "disability" in msg:
+            x.find_element(css, "option[value*='Select an option']").click()
+            x.find_element(css, "option[value*='No']").click()
+    if finds(css, "button[aria-label*='Continue to next step']"):
+        data.append(find(css, "div[class='jobs-easy-apply-content']").text)
+        find(css, "[aria-label*='Continue to next step']").click()
 
 def easy_apply():
     try:
@@ -124,32 +144,16 @@ def easy_apply():
                             )
                         elif "i agree terms" in phrase:
                             elem.find_element(css, "label").click()
+                        elif ("Self-Identification"
+                        in find(css, "div[class*='jobs-easy-apply-content']").text):
+                            fill_self_identification(data)
                     except:
                         pass
             elif (
                 "Self-Identification"
                 in find(css, "div[class*='jobs-easy-apply-content']").text
             ):
-                options = find(
-                    css, "div[class*='jobs-easy-apply-content']"
-                ).find_elements(css, "select")
-                for x in options:
-                    msg = x.text.lower()
-                    if "veteran" in msg:
-                        x.find_element(css, "option[value*='Select an option']").click()
-                        x.find_element(css, "option[value*='I am not']").click()
-                    elif "race" in msg:
-                        x.find_element(css, "option[value*='Select an option']").click()
-                        x.find_element(css, "option[value*='Asian']").click()
-                    elif "male" in msg:
-                        x.find_element(css, "option[value*='Select an option']").click()
-                        x.find_element(css, "option[value*='Male']").click()
-                    elif "disability" in msg:
-                        x.find_element(css, "option[value*='Select an option']").click()
-                        x.find_element(css, "option[value*='No']").click()
-                if finds(css, "button[aria-label*='Continue to next step']"):
-                    data.append(find(css, "div[class='jobs-easy-apply-content']").text)
-                    find(css, "[aria-label*='Continue to next step']").click()
+                fill_self_identification(data)
             elif finds(css, "button[aria-label*='Continue to next step']"):
                 data.append(find(css, "div[class='jobs-easy-apply-content']").text)
                 find(css, "[aria-label*='Continue to next step']").click()
