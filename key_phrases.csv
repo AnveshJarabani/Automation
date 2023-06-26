@@ -1,4 +1,4 @@
-word,freq
+run word,freq
 "('data', 'engineer')",93
 "('years', 'experience')",78
 "('experience', 'working')",50
