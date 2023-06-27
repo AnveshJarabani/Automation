@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import json, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
-import os
+import traceback
 
 chromeOptions = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chromeOptions)
@@ -52,14 +52,19 @@ def select(elem, selection):
         elem.find_element(
             css, f"label[data-test-text-selectable-option__label={selection}]"
         ).click()
-    except:
-        try:
-            elem.find_element(css, "select[id*='text-entity']").click()
-            elem.find_element(css, f"option[value*={selection}]").click()
-        except:
-            elem.find_element(css, "input[type*='text']").send_keys(selection)
-            time.sleep(0.5)
-            elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
+        return
+    except:...
+    try:
+        elem.find_element(css, "select[id*='text-entity']").click()
+        elem.find_element(css, "input[type*='text']").send_keys(selection)
+        time.sleep(0.5)
+        elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
+        return
+    except:...
+    try:
+        elem.find_element(css, f"option[value*={selection}]").click()
+        return
+    except: ...
 
 
 yes_words = [
@@ -257,9 +262,7 @@ while page <= 40:
             print(
                 [
                     cur_dict["Company Detail"][-1].split("\n")[1],
-                    [i for i in cur_dict["Salary Detail"][-1].split("\n") if "$" in i][
-                        0
-                    ],
+                    [i for i in cur_dict["Salary Detail"][-1].split("\n") if "$" in i],
                 ]
             )
 
@@ -269,8 +272,8 @@ while page <= 40:
                     == "Easy Apply"
                 ):
                     cur_dict["Form Data"].append(easy_apply())
-                else:
-                    cur_dict["Form Data"].append(pop_apply())
+                # else:
+                    # cur_dict["Form Data"].append(pop_apply())
             cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
             for i in list(cur_dict.keys())[:-1]:
                 cur_dict[i] = list(set(cur_dict[i]))
@@ -278,6 +281,7 @@ while page <= 40:
                 json.dump(cur_dict, f)
         except Exception as e:
             print(e)
+            traceback.print_exc()
     page += 1
     time.sleep(2)
     find(css, f"li[data-test-pagination-page-btn='{page}']").click()
