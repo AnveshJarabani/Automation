@@ -10,10 +10,6 @@ data_dict = json.load(open("./job_data.json", "r"))
 
 
 list(data_dict)
-print(data_dict['Salary Detail'][10].split("\n")[7])
-print(data_dict['Salary Detail'][400].split("\n")[7])
-
-
 
 del data_dict["Form Data"]
 keys = list(data_dict.keys())
@@ -36,7 +32,7 @@ for i in df["Desc"]:
     words = patrn.findall(i.lower())
     filterd_words = [wrd for wrd in words if wrd not in stop_words]
     #! change phrase count as needed
-    phrases = list(ngrams(filterd_words, 1))  # generate 2 word phrases
+    phrases = list(ngrams(filterd_words, 2))  # generate 2 word phrases
     filterd_phrases.extend(phrases)
 phrase_frequencies = Counter(filterd_phrases)
 keywords = {
@@ -53,7 +49,7 @@ keywords["word"] = lst
 df_phrases = pd.DataFrame(keywords)
 df_phrases = df_phrases.sort_values(by="freq", ascending=False, ignore_index=True)
 print(df_phrases.head(100))
-# df_phrases.to_csv(path.format('key_phrases.csv'),index=False)
+df_phrases.to_csv(("./key_phrases.csv"), index=False)
 
 
 """
