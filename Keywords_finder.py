@@ -6,7 +6,7 @@ from nltk import ngrams
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
-data_dict = json.load(open("./job_data.json", "r"))
+data_dict = json.load(open("./job_data_quality.json", "r"))
 
 
 list(data_dict)
@@ -48,8 +48,9 @@ for i in keywords["word"]:
 keywords["word"] = lst
 df_phrases = pd.DataFrame(keywords)
 df_phrases = df_phrases.sort_values(by="freq", ascending=False, ignore_index=True)
+df_phrases=df_phrases.loc[df_phrases['freq']>=10]
 print(df_phrases.head(100))
-df_phrases.to_csv(("./key_phrases.csv"), index=False)
+df_phrases.to_csv(("./key_phrases_quality.csv"), index=False)
 
 
 """

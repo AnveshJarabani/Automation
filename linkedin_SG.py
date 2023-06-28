@@ -12,6 +12,7 @@ css = By.CSS_SELECTOR
 xpath = By.XPATH
 find = driver.find_element
 finds = driver.find_elements
+tag=By.TAG_NAME
 located = EC.presence_of_all_elements_located
 clkable = EC.element_to_be_clickable
 driver.maximize_window()
@@ -22,23 +23,23 @@ if len(elms) == 0:
     driver.get("https://www.linkedin.com/")
 time.sleep(2)
 encrypt = json.load(open("../PYTHON/PRIVATE/encrypt.json", "r"))
-find(css, "input[id='session_key']").send_keys(encrypt["username"])
-find(css, "input[id='session_password']").send_keys(encrypt["password"])
+find(css, "input[id='session_key']").send_keys(encrypt["username_sg"])
+find(css, "input[id='session_password']").send_keys(encrypt["password_sg"])
 find(css, "button[data-id*='sign-in-form__submit-btn']").click()
 # ! USE BELOW LINE FOR RECOMMENDED JOBS ONLY _________________________________
 # driver.get("https://www.linkedin.com/jobs/collections/recommended/")
 
 #!SELECTING QUALTIY ROLES/ 165K+ ROLES ONLY ___________________________________
-wait(driver, 10).until(located((css, "[title*='Jobs']")))
-find(css, "[title*='Jobs']").click()
-wait(driver, 25).until(located((css, "[id*='jobs-search-box-keyword']")))
-find(css, "[id*='jobs-search-box-keyword']").send_keys("QUALITY\n")
+# wait(driver, 10).until(located((css, "[title*='Jobs']")))
+# find(css, "[title*='Jobs']").click()
+# wait(driver, 25).until(located((css, "[id*='jobs-search-box-keyword']")))
+# find(css, "[id*='jobs-search-box-keyword']").send_keys("QUALITY ASSURANCE\n")
 # wait(driver, 25).until(located((css, "[aria-label*='Easy Apply filter.']")))
 # find(css, "[aria-label*='Easy Apply filter.']").click()  # EASY APPLY FILTER
-time.sleep(2)
+# time.sleep(2)
 # find(css, "button[aria-label*='Salary filter.']").click()
 # find(css, "label[for*='V2-7']").click()
-time.sleep(2)
+# time.sleep(2)
 # [
 #     i
 #     for i in finds(css, "button[data-control-name*='filter_show_results']")
@@ -277,11 +278,18 @@ while page <= 40:
             cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
             for i in list(cur_dict.keys())[:-1]:
                 cur_dict[i] = list(set(cur_dict[i]))
-            with open("./job_data.json", "w") as f:
+            with open("./job_data_quality.json", "w") as f:
                 json.dump(cur_dict, f)
         except Exception as e:
             print(e)
             traceback.print_exc()
     page += 1
     time.sleep(2)
-    find(css, f"li[data-test-pagination-page-btn='{page}']").click()
+    try:
+        find(css, f"li[data-test-pagination-page-btn='{page}']").click()
+    except:
+        page_tab=find(css,"ul[class*='artdeco-pagination__pages']")
+        lst=page_tab.find_elements(tag,'li')
+        [i for i in lst if i.text=='…'][0].click()
+        
+len(lst)
