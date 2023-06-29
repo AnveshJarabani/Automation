@@ -292,4 +292,3 @@ while page <= 40:
         lst=page_tab.find_elements(tag,'li')
         [i for i in lst if i.text=='…'][0].click()
         
-len(lst)

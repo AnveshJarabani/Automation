@@ -12,11 +12,12 @@ css = By.CSS_SELECTOR
 xpath = By.XPATH
 find = driver.find_element
 finds = driver.find_elements
+tag=By.TAG_NAME
 located = EC.presence_of_all_elements_located
 clkable = EC.element_to_be_clickable
 driver.maximize_window()
 driver.get("https://www.linkedin.com/")
-elms = finds(By.TAG_NAME, "button")
+elms = finds(tag, "button")
 if len(elms) == 0:
     time.sleep(2)
     driver.get("https://www.linkedin.com/")
@@ -284,4 +285,9 @@ while page <= 40:
             traceback.print_exc()
     page += 1
     time.sleep(2)
-    find(css, f"li[data-test-pagination-page-btn='{page}']").click()
+    try:
+        find(css, f"li[data-test-pagination-page-btn='{page}']").click()
+    except:
+        page_tab=find(css,"ul[class*='artdeco-pagination__pages']")
+        lst=page_tab.find_elements(tag,'li')
+        [i for i in lst if i.text=='…'][0].click()
