@@ -278,11 +278,13 @@ while page <= 40:
             cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
             for i in list(cur_dict.keys())[:-1]:
                 cur_dict[i] = list(set(cur_dict[i]))
+        except Exception as e:
             with open("./job_data.json", "w") as f:
                 json.dump(cur_dict, f)
-        except Exception as e:
             print(e)
             traceback.print_exc()
+    with open("./job_data.json", "w") as f:
+        json.dump(cur_dict, f)
     page += 1
     time.sleep(2)
     try:
