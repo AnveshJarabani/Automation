@@ -290,6 +290,6 @@ while page <= 40:
     except:
         page_tab=find(css,"ul[class*='artdeco-pagination__pages']")
         lst=page_tab.find_elements(tag,'li')
-        [i for i in lst if i.text=='…'][0].click()
+        [i for i in lst if i.text=='…   '][0].click()
         
 len(lst)
