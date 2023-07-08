@@ -76,8 +76,19 @@ yes_words = [
     "do you have experience",
     "eligible to work",
     "authorized to work",
+    "right to work",
     "vaccinated",
     "w2",
+    "consent to being contacted",
+    "willing to",
+]
+no_words = [
+    "former employee",
+    "previously employed",
+    "have you ever been employed by",
+    "us citizen",
+    "dual citizen",
+    "c2c",
 ]
 
 
@@ -93,7 +104,7 @@ def fill_self_identification(data):
         elif "race" in msg:
             x.find_element(css, "option[value*='Select an option']").click()
             x.find_element(css, "option[value*='Asian']").click()
-        elif "male" in msg:
+        elif "Female" in msg:
             x.find_element(css, "option[value*='Select an option']").click()
             x.find_element(css, "option[value*='Female']").click()
         elif "disability" in msg:
@@ -126,13 +137,17 @@ def easy_apply():
                             time.sleep(0.5)
                         elif "how many year" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(3)
+                        elif "current location" in phrase:
+                            elem.find_element(css, "input[type*='text']").send_keys(
+                                "Chandler, Arizona, United States"
+                            )
                         elif (
                             "salary" in phrase
                             or "pay" in phrase
                             or "compensation" in phrase
                         ):
                             elem.find_element(css, "input[type*='text']").send_keys(
-                                120000
+                                100000
                             )
                         elif "name\n" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(
@@ -140,9 +155,7 @@ def easy_apply():
                             )
                         elif any(i in phrase for i in yes_words):
                             select(elem, "Yes")
-                        elif "c2c" in phrase:
-                            select(elem, "No")
-                        elif "sponsorship" in phrase:
+                        elif any(i in phrase for i in no_words):
                             select(elem, "No")
                         elif "how did you hear" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(
