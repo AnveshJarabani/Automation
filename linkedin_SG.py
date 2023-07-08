@@ -38,7 +38,7 @@ driver.get("https://www.linkedin.com/jobs/collections/recommended/")
 # find(css, "[aria-label*='Easy Apply filter.']").click()  # EASY APPLY FILTER
 # time.sleep(2)
 # find(css, "button[aria-label*='Salary filter.']").click()
-# find(css, "label[for*='V2-7']").click()
+# find(css, "label[for*='V2-4']").click()
 # time.sleep(2)
 # [
 #     i
