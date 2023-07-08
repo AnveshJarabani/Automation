@@ -74,22 +74,29 @@ def select(elem, selection):
 yes_words = [
     "commut",
     "do you have experience",
+    "experience",
     "eligible to work",
     "authorized to work",
+    "authorized for employement",
     "right to work",
     "vaccinated",
     "w2",
     "consent to being contacted",
     "willing to",
+    "ms excel",
+    "degree",
+    "18 years",
 ]
 no_words = [
     "former employee",
     "previously employed",
     "have you ever been employed by",
-    "us citizen",
+    "citizen",
     "dual citizen",
+    "sponsorship",
     "c2c",
 ]
+msg = "I'm a results-driven compliance analyst with over 3 years of experience in implementing regulatory compliance policies and procedures. Adept at identifying potential risks, conducting thorough investigations, managing SLA and providing guidance to ensure adherence to relevant regulations.I possess strong analytical and problem-solving skills to effectively collaborate with cross-functional teams to achieve compliance objectives. The current position being offered is ideal based on my career goals and past work experience."
 
 
 def fill_self_identification(data):
@@ -164,10 +171,16 @@ def easy_apply():
                         elif (
                             "you able to begin" in phrase
                             or "when can you start" in phrase
+                            or "available to start" in phrase
                         ):
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "IMMEDIATELY"
                             )
+                        elif (
+                            "message to the hiring manager" in phrase
+                            or "cover letter" in phrase
+                        ):
+                            elem.find_element(css, "input[type*='text']").send_keys(msg)
                         elif "i agree terms" in phrase:
                             elem.find_element(css, "label").click()
                         elif (
