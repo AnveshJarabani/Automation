@@ -5,7 +5,9 @@ import json, time
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import traceback
+from datetime import datetime
 
+today = datetime.today().strftime("%m/%d/%y")
 chromeOptions = webdriver.ChromeOptions()
 driver = webdriver.Chrome(options=chromeOptions)
 css = By.CSS_SELECTOR
@@ -90,6 +92,7 @@ yes_words = [
 no_words = [
     "former employee",
     "previously employed",
+    "currently employed",
     "have you ever been employed by",
     "citizen",
     "dual citizen",
@@ -107,7 +110,7 @@ def fill_self_identification(data):
         msg = x.text.lower()
         if "veteran" in msg:
             x.find_element(css, "option[value*='Select an option']").click()
-            x.find_element(css, "option[value*='I am not']").click()
+            x.find_element(css, "option[*value*='no']").click()
         elif "race" in msg:
             x.find_element(css, "option[value*='Select an option']").click()
             x.find_element(css, "option[value*='Asian']").click()
@@ -176,6 +179,10 @@ def easy_apply():
                             elem.find_element(css, "input[type*='text']").send_keys(
                                 "IMMEDIATELY"
                             )
+                        elif "today's date" in phrase:
+                            elem.find_element(css, "input[type*='text']").send_keys(
+                                today
+                            )
                         elif (
                             "message to the hiring manager" in phrase
                             or "cover letter" in phrase
@@ -191,8 +198,10 @@ def easy_apply():
                     except:
                         pass
             elif (
-                "Self-Identification"
-                in find(css, "div[class*='jobs-easy-apply-content']").text
+                "voluntary self-identification"
+                in find(css, "div[class*='jobs-easy-apply-content']").text.lower()
+                or "self identification"
+                in find(css, "div[class*='jobs-easy-apply-content']").text.lower()
             ):
                 fill_self_identification(data)
             elif finds(css, "button[aria-label*='Continue to next step']"):
