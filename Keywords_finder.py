@@ -6,7 +6,7 @@ from nltk import ngrams
 from nltk.tokenize import word_tokenize
 from nltk.corpus import stopwords
 
-data_dict = json.load(open("./job_data_quality.json", "r"))
+data_dict = json.load(open("job_data_quality.json", "r"))
 
 
 list(data_dict)
