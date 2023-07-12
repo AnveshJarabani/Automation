@@ -12,7 +12,7 @@ css = By.CSS_SELECTOR
 xpath = By.XPATH
 find = driver.find_element
 finds = driver.find_elements
-tag=By.TAG_NAME
+tag = By.TAG_NAME
 located = EC.presence_of_all_elements_located
 clkable = EC.element_to_be_clickable
 driver.maximize_window()
@@ -48,39 +48,39 @@ driver.get("https://www.linkedin.com/jobs/collections/recommended/")
 # ! ________________________________________________________________
 
 
+yes_words = encrypt["yes_words"]
+no_words = encrypt["no_words"]
+
+
 def select(elem, selection):
     try:
         elem.find_element(
             css, f"label[data-test-text-selectable-option__label={selection}]"
         ).click()
         return
-    except:...
+    except:
+        ...
     try:
         elem.find_element(css, "select[id*='text-entity']").click()
         elem.find_element(css, "input[type*='text']").send_keys(selection)
         time.sleep(0.5)
         elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
         return
-    except:...
+    except:
+        ...
     try:
         elem.find_element(css, f"option[value*={selection}]").click()
         return
-    except: ...
+    except:
+        ...
 
 
-yes_words = [
-    "commut",
-    "do you have experience",
-    "eligible to work",
-    "authorized to work",
-    "sponsorship",
-    "vaccinated",
-    "w2",
-]
+
+
 def fill_self_identification(data):
-    options = find(
-                    css, "div[class*='jobs-easy-apply-content']"
-                ).find_elements(css, "select")
+    options = find(css, "div[class*='jobs-easy-apply-content']").find_elements(
+        css, "select"
+    )
     for x in options:
         msg = x.text.lower()
         if "veteran" in msg:
@@ -98,6 +98,7 @@ def fill_self_identification(data):
     if finds(css, "button[aria-label*='Continue to next step']"):
         data.append(find(css, "div[class='jobs-easy-apply-content']").text)
         find(css, "[aria-label*='Continue to next step']").click()
+
 
 def easy_apply():
     try:
@@ -135,7 +136,7 @@ def easy_apply():
                             )
                         elif any(i in phrase for i in yes_words):
                             select(elem, "Yes")
-                        elif "c2c" in phrase:
+                        elif any(i in phrase for i in no_words):
                             select(elem, "No")
                         elif "how did you hear" in phrase:
                             elem.find_element(css, "input[type*='text']").send_keys(
@@ -150,8 +151,10 @@ def easy_apply():
                             )
                         elif "i agree terms" in phrase:
                             elem.find_element(css, "label").click()
-                        elif ("Self-Identification"
-                        in find(css, "div[class*='jobs-easy-apply-content']").text):
+                        elif (
+                            "Self-Identification"
+                            in find(css, "div[class*='jobs-easy-apply-content']").text
+                        ):
                             fill_self_identification(data)
                     except:
                         pass
@@ -274,7 +277,7 @@ while page <= 40:
                 ):
                     cur_dict["Form Data"].append(easy_apply())
                 # else:
-                    # cur_dict["Form Data"].append(pop_apply())
+                # cur_dict["Form Data"].append(pop_apply())
             cur_dict["Form Data"] = [i for i in cur_dict["Form Data"] if i != []]
             for i in list(cur_dict.keys())[:-1]:
                 cur_dict[i] = list(set(cur_dict[i]))
@@ -290,6 +293,6 @@ while page <= 40:
     try:
         find(css, f"li[data-test-pagination-page-btn='{page}']").click()
     except:
-        page_tab=find(css,"ul[class*='artdeco-pagination__pages']")
-        lst=page_tab.find_elements(tag,'li')
-        [i for i in lst if i.text=='…'][0].click()
+        page_tab = find(css, "ul[class*='artdeco-pagination__pages']")
+        lst = page_tab.find_elements(tag, "li")
+        [i for i in lst if i.text == "…"][0].click()

@@ -29,24 +29,28 @@ find(css, "input[id='session_key']").send_keys(encrypt["username"])
 find(css, "input[id='session_password']").send_keys(encrypt["password"])
 find(css, "button[data-id*='sign-in-form__submit-btn']").click()
 # ! USE BELOW LINE FOR RECOMMENDED JOBS ONLY _________________________________
-driver.get("https://www.linkedin.com/jobs/collections/recommended/")
+# driver.get("https://www.linkedin.com/jobs/collections/recommended/")
 
-#!SELECTING QUALTIY ROLES/ 165K+ ROLES ONLY ___________________________________
-# wait(driver, 10).until(located((css, "[title*='Jobs']")))
-# find(css, "[title*='Jobs']").click()
-# wait(driver, 25).until(located((css, "[id*='jobs-search-box-keyword']")))
-# find(css, "[id*='jobs-search-box-keyword']").send_keys("QUALITY ASSURANCE\n")
-# wait(driver, 25).until(located((css, "[aria-label*='Easy Apply filter.']")))
-# find(css, "[aria-label*='Easy Apply filter.']").click()  # EASY APPLY FILTER
-# time.sleep(2)
+#!SELECTING QUALTIY ROLES___________________________________
+wait(driver, 10).until(located((css, "[title*='Jobs']")))
+find(css, "[title*='Jobs']").click()
+wait(driver, 25).until(located((css, "[id*='jobs-search-box-keyword']")))
+# FOR SWEETIE TO CHANGE -- RIGHT BELOW!!
+find(css, "[id*='jobs-search-box-keyword']").send_keys("ANALYST\n")
+wait(driver, 25).until(located((css, "[aria-label*='Easy Apply filter.']")))
+find(css, "[aria-label*='Easy Apply filter.']").click()  # EASY APPLY FILTER
+time.sleep(2)
+# DATE POSTED
+find(css, "button[aria-label*='Date posted filter.']").click()
+find(css, "label[for*='-r86400']").click()
 # find(css, "button[aria-label*='Salary filter.']").click()
 # find(css, "label[for*='V2-4']").click()
-# time.sleep(2)
-# [
-#     i
-#     for i in finds(css, "button[data-control-name*='filter_show_results']")
-#     if "result" in i.text
-# ][0].click()
+time.sleep(2)
+[
+    i
+    for i in finds(css, "button[data-control-name*='filter_show_results']")
+    if "result" in i.text
+][0].click()
 # ! ________________________________________________________________
 
 
@@ -99,7 +103,8 @@ no_words = [
     "sponsorship",
     "c2c",
 ]
-msg = "I'm a results-driven compliance analyst with over 3 years of experience in implementing regulatory compliance policies and procedures. Adept at identifying potential risks, conducting thorough investigations, managing SLA and providing guidance to ensure adherence to relevant regulations.I possess strong analytical and problem-solving skills to effectively collaborate with cross-functional teams to achieve compliance objectives. The current position being offered is ideal based on my career goals and past work experience."
+
+msg = encrypt["msg"]
 
 
 def fill_self_identification(data):
