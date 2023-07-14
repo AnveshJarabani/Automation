@@ -25,7 +25,7 @@ time.sleep(2)
 encrypt = json.load(open("../PYTHON/PRIVATE/encrypt.json", "r"))
 
 
-inp = "recommended"  # specific for specific jobs
+inp = "specific"  # specific for specific jobs
 role = "Data Engineer"
 slry_range = 1
 apply_linkedin(driver, encrypt, inp, role, slry_range)
