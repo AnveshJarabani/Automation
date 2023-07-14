@@ -19,13 +19,14 @@ elms = finds(tag, "button")
 if len(elms) == 0:
     time.sleep(1)
     driver.get("https://www.linkedin.com/")
+    time.sleep(1)
     [i for i in finds(css, "button") if i.text == "Sign in"][0].click()
 time.sleep(2)
 encrypt = json.load(open("../PYTHON/PRIVATE/encrypt_sg.json", "r"))
 
-# ! USE BELOW LINE FOR RECOMMENDED JOBS ONLY _________________________________
+
 inp = "recommended"  # specific for specific jobs
-role="analyst"
-slry_range=1
-apply_linkedin(driver,encrypt,inp,role,slry_range)
+role = "analyst"
+slry_range = 1
+apply_linkedin(driver, encrypt, inp, role, slry_range)
 # salary range - 1 for Anvesh, 0 for sweeite to ignore range

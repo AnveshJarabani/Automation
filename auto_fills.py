@@ -7,6 +7,7 @@ import time
 import json
 import traceback
 from datetime import datetime
+
 today = datetime.today().strftime("%m/%d/%y")
 css = By.CSS_SELECTOR
 xpath = By.XPATH
@@ -14,7 +15,8 @@ tag = By.TAG_NAME
 located = EC.presence_of_all_elements_located
 clkable = EC.element_to_be_clickable
 
-def fill_self_identification(driver,data,gender):
+
+def fill_self_identification(data, driver, gender):
     find = driver.find_element
     finds = driver.find_elements
     options = find(css, "div[class*='jobs-easy-apply-content']").find_elements(
@@ -38,7 +40,8 @@ def fill_self_identification(driver,data,gender):
         data.append(find(css, "div[class='jobs-easy-apply-content']").text)
         find(css, "[aria-label*='Continue to next step']").click()
         return data
-    
+
+
 def select(elem, selection):
     try:
         elem.find_element(
@@ -61,9 +64,9 @@ def select(elem, selection):
         return
     except:
         ...
-        
-        
-def pop_apply(driver,encrypt):
+
+
+def pop_apply(driver, encrypt):
     find = driver.find_element
     finds = driver.find_elements
     try:
@@ -111,9 +114,9 @@ def pop_apply(driver,encrypt):
         driver.close()
         driver.switch_to.window(driver.window_handles[0])
         return
-    
-    
-def easy_apply(driver,encrypt):
+
+
+def easy_apply(driver, encrypt):
     find = driver.find_element
     finds = driver.find_elements
     yes_words = encrypt["yes_words"]
@@ -129,72 +132,60 @@ def easy_apply(driver,encrypt):
                     try:
                         phrase = elem.text.lower()
                         if elem.find_elements(css, "input[type*='text']"):
-                            text_elem=elem.find_element(css, "input[type*='text']")
+                            text_elem = elem.find_element(css, "input[type*='text']")
                         if any(i in phrase for i in yes_words):
                             select(elem, "Yes")
                         if any(i in phrase for i in no_words):
                             select(elem, "No")
                         if "city" in phrase:
-                            text_elem.send_keys(
-                                encrypt['location']
-                            )
+                            text_elem.send_keys(encrypt["location"])
                             time.sleep(0.5)
                             text_elem.send_keys(Keys.TAB)
                         if "phone" in phrase:
-                            text_elem.send_keys(encrypt['mobile phone'])
+                            text_elem.send_keys(encrypt["mobile phone"])
                             time.sleep(0.5)
-                            text_elem.send_keys(
-                                Keys.TAB
-                            )
+                            text_elem.send_keys(Keys.TAB)
                             time.sleep(0.5)
                         if "how many year" in phrase:
-                            text_elem.send_keys(encrypt['exp_years'])
+                            text_elem.send_keys(encrypt["exp_years"])
+                            text_elem.send_keys(Keys.TAB)
+                            time.sleep(0.5)
+
                         if (
                             "salary" in phrase
                             or "pay" in phrase
                             or "compensation" in phrase
                         ):
-                            text_elem.send_keys(
-                                encrypt['salary']
-                            )
+                            text_elem.send_keys(encrypt["salary"])
                         if "name\n" in phrase:
-                            text_elem.send_keys(
-                                encrypt["full name"]
-                            )
+                            text_elem.send_keys(encrypt["full name"])
                         if "how did you hear" in phrase:
-                            text_elem.send_keys(
-                                "Linkedin"
-                            )
+                            text_elem.send_keys("Linkedin")
                         if (
                             "you able to begin" in phrase
                             or "when can you start" in phrase
                         ):
-                            text_elem.send_keys(
-                                encrypt['start_gap']
-                            )
+                            text_elem.send_keys(encrypt["start_gap"])
                         if "today's date" in phrase:
-                            text_elem.send_keys(
-                                today
-                            )
+                            text_elem.send_keys(today)
                         if (
-                        "message to the hiring manager" in phrase
-                        or "cover letter" in phrase
-                    ):
-                            text_elem.send_keys(encrypt['msg'])
+                            "message to the hiring manager" in phrase
+                            or "cover letter" in phrase
+                        ):
+                            text_elem.send_keys(encrypt["msg"])
                         if "i agree terms" in phrase:
                             elem.find_element(css, "label").click()
                         if (
-                            "Self-Identification"
+                            "voluntary"
                             in find(css, "div[class*='jobs-easy-apply-content']").text
                         ):
-                            data = fill_self_identification(data,driver,encrypt['gender'])
+                            data = fill_self_identification(
+                                data, driver, encrypt["gender"]
+                            )
                     except:
                         pass
-            elif (
-                "Self-Identification"
-                in find(css, "div[class*='jobs-easy-apply-content']").text
-            ):
-                data = fill_self_identification(data,driver,'male')
+            elif "voluntary" in find(css, "div[class*='jobs-easy-apply-content']").text:
+                data = fill_self_identification(data, driver, encrypt["gender"])
             elif finds(css, "button[aria-label*='Continue to next step']"):
                 data.append(find(css, "div[class='jobs-easy-apply-content']").text)
                 find(css, "[aria-label*='Continue to next step']").click()
@@ -218,8 +209,7 @@ def easy_apply(driver,encrypt):
         pass
 
 
-
-def auto_apply(driver,encrypt):
+def auto_apply(driver, encrypt):
     find = driver.find_element
     finds = driver.find_elements
     page = 1
@@ -234,9 +224,9 @@ def auto_apply(driver,encrypt):
                     "arguments[0].scrollIntoView()",
                     finds(css, "li[class*='jobs-search-results__list-item']")[r],
                 )
-                finds(css, "li[class*='jobs-search-results__list-item']")[r].find_element(
-                    css, "a"
-                ).click()
+                finds(css, "li[class*='jobs-search-results__list-item']")[
+                    r
+                ].find_element(css, "a").click()
                 time.sleep(1)
                 if finds(css, "div[class*='jobs-company__box']"):
                     cur_dict["Company Detail"].append(
@@ -246,15 +236,23 @@ def auto_apply(driver,encrypt):
                     print("No Company Detail Found")
                     cur_dict["Company Detail"].append("No Company Detail Found")
                 cur_dict["Details"].append(
-                    find(css, "div[class*='jobs-unified-top-card__content--two-pane']").text
+                    find(
+                        css, "div[class*='jobs-unified-top-card__content--two-pane']"
+                    ).text
                 )
-                cur_dict["Desc"].append(find(css, "div[class*='jobs-description']").text)
+                cur_dict["Desc"].append(
+                    find(css, "div[class*='jobs-description']").text
+                )
 
                 cur_dict["Salary Detail"].append(find(css, "div[id*='SALARY']").text)
                 print(
                     [
                         cur_dict["Company Detail"][-1].split("\n")[1],
-                        [i for i in cur_dict["Salary Detail"][-1].split("\n") if "$" in i],
+                        [
+                            i
+                            for i in cur_dict["Salary Detail"][-1].split("\n")
+                            if "$" in i
+                        ],
                     ]
                 )
 
@@ -263,7 +261,7 @@ def auto_apply(driver,encrypt):
                         finds(css, "div[class*='jobs-apply-button--']")[0].text
                         == "Easy Apply"
                     ):
-                        cur_dict["Form Data"].append(easy_apply(driver,encrypt))
+                        cur_dict["Form Data"].append(easy_apply(driver, encrypt))
                     else:
                         ...
                     # cur_dict["Form Data"].append(pop_apply(driver,encrypt))
@@ -285,7 +283,7 @@ def auto_apply(driver,encrypt):
             [i for i in lst if i.text == "…"][0].click()
 
 
-def apply_linkedin(driver,encrypt,inp,role,slry_range):
+def apply_linkedin(driver, encrypt, inp, role, slry_range):
     find = driver.find_element
     finds = driver.find_elements
     find(css, "input[id='session_key']").send_keys(encrypt["username"])
@@ -302,11 +300,11 @@ def apply_linkedin(driver,encrypt,inp,role,slry_range):
         find(css, "button[aria-label*='Date posted filter.']").click()
         find(css, "label[for*='-r86400']").click()
         time.sleep(2)
-        if slry_range==1:
+        if slry_range == 1:
             find(css, "button[aria-label*='Salary filter.']").click()
             find(css, "label[for*='V2-7']").click()
             time.sleep(2)
-        
+
         [
             i
             for i in finds(css, "button[data-control-name*='filter_show_results']")
@@ -314,5 +312,4 @@ def apply_linkedin(driver,encrypt,inp,role,slry_range):
         ][0].click()
     else:
         driver.get("https://www.linkedin.com/jobs/collections/recommended/")
-    auto_apply(driver,encrypt)
-        
+    auto_apply(driver, encrypt)
