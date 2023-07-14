@@ -157,17 +157,27 @@ def easy_apply(driver, encrypt):
                             or "compensation" in phrase
                         ):
                             text_elem.send_keys(encrypt["salary"])
+                            text_elem.send_keys(Keys.TAB)
+                            time.sleep(0.5)
                         if "name\n" in phrase:
                             text_elem.send_keys(encrypt["full name"])
+                            text_elem.send_keys(Keys.TAB)
+                            time.sleep(0.5)
                         if "how did you hear" in phrase:
                             text_elem.send_keys("Linkedin")
+                            text_elem.send_keys(Keys.TAB)
+                            time.sleep(0.5)
                         if (
                             "you able to begin" in phrase
                             or "when can you start" in phrase
                         ):
                             text_elem.send_keys(encrypt["start_gap"])
+                            text_elem.send_keys(Keys.TAB)
+                            time.sleep(0.5)
                         if "today's date" in phrase:
                             text_elem.send_keys(today)
+                            text_elem.send_keys(Keys.TAB)
+                            time.sleep(0.5)
                         if (
                             "message to the hiring manager" in phrase
                             or "cover letter" in phrase
