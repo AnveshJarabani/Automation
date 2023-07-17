@@ -15,7 +15,6 @@ tag = By.TAG_NAME
 located = EC.presence_of_all_elements_located
 clkable = EC.element_to_be_clickable
 
-
 def fill_self_identification(data, driver, gender):
     find = driver.find_element
     finds = driver.find_elements
