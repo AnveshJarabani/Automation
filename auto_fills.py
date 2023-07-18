@@ -176,10 +176,8 @@ def easy_apply(driver, encrypt):
                                 data, driver, encrypt["gender"]
                             )
                     except: ...
-            try:
-                if "voluntary" in find(css, "div      [class*='jobs-easy-apply-content']").text:
+            if "voluntary" in find(css, "div      [class*='jobs-easy-apply-content']").text:
                     data = fill_self_identification(data, driver, encrypt["gender"])
-            except:...
             if finds(css, "button[aria-label*='Continue to next step']"):
                 data.append(find(css, "div[class='jobs-easy-apply-content']").text)
                 find(css, "[aria-label*='Continue to next step']").click()
