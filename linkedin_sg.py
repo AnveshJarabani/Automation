@@ -30,3 +30,4 @@ role = "analyst"
 slry_range = 1
 apply_linkedin(driver, encrypt, inp, role, slry_range)
 # salary range - 1 for Anvesh, 0 for sweeite to ignore range
+ 
