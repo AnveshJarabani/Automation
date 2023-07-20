@@ -192,6 +192,7 @@ def easy_apply(driver, encrypt):
                 break
         while True:
             try:
+                time.sleep(1)                
                 find(css, "button[aria-label*='Dismiss']").click()
                 break
             except: ...
