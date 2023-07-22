@@ -15,6 +15,7 @@ tag = By.TAG_NAME
 located = EC.presence_of_all_elements_located
 clkable = EC.element_to_be_clickable
 
+
 def fill_self_identification(data, driver, gender):
     find = driver.find_element
     finds = driver.find_elements
@@ -39,25 +40,29 @@ def fill_self_identification(data, driver, gender):
         data.append(find(css, "div[class='jobs-easy-apply-content']").text)
         find(css, "[aria-label*='Continue to next step']").click()
         return data
+
 def select(elem, selection):
     try:
         elem.find_element(
             css, f"label[data-test-text-selectable-option__label={selection}]"
         ).click()
         return
-    except:...
+    except:
+        ...
     try:
         elem.find_element(css, "select[id*='text-entity']").click()
         elem.find_element(css, "input[type*='text']").send_keys(selection)
         time.sleep(0.5)
         elem.find_element(css, "input[type*='text']").send_keys(Keys.TAB)
         return
-    except:...
+    except:
+        ...
     try:
         elem.find_element(css, f"option[value*={selection}]").click()
         elem.send_keys(Keys.TAB)
         return
-    except:...
+    except:
+        ...
 
 
 def pop_apply(driver, encrypt):
@@ -109,11 +114,11 @@ def pop_apply(driver, encrypt):
         driver.switch_to.window(driver.window_handles[0])
         return
 
-def fill_input(elem,text):
+
+def fill_input(elem, text):
     elem.send_keys(text)
     time.sleep(0.5)
     elem.send_keys(Keys.TAB)
-        
 
 
 def easy_apply(driver, encrypt):
@@ -137,35 +142,35 @@ def easy_apply(driver, encrypt):
                             select(elem, "Yes")
                         if any(i in phrase for i in no_words):
                             select(elem, "No")
-                        if "city" in phrase:
-                            fill_input(text_elem,encrypt["location"])
+                        if "city" in phrase or "location" in phrase:
+                            fill_input(text_elem, encrypt["location"])
                         if "phone" in phrase:
-                            fill_input(text_elem,encrypt["mobile phone"])
+                            fill_input(text_elem, encrypt["mobile phone"])
                         if "how many year" in phrase:
-                            fill_input(text_elem,encrypt["exp_years"])
+                            fill_input(text_elem, encrypt["exp_years"])
 
                         if (
                             "salary" in phrase
                             or "pay" in phrase
                             or "compensation" in phrase
                         ):
-                            fill_input(text_elem,encrypt["salary"])
+                            fill_input(text_elem, encrypt["salary"])
                         if "name\n" in phrase:
-                            fill_input(text_elem,encrypt["full name"])
+                            fill_input(text_elem, encrypt["full name"])
                         if "how did you hear" in phrase:
                             text_elem.send_keys("Linkedin")
                         if (
                             "you able to begin" in phrase
                             or "when can you start" in phrase
                         ):
-                            fill_input(text_elem,encrypt["start_gap"])
+                            fill_input(text_elem, encrypt["start_gap"])
                         if "today's date" in phrase:
                             text_elem.send_keys(today)
                         if (
                             "message to the hiring manager" in phrase
                             or "cover letter" in phrase
                         ):
-                            fill_input(text_elem,encrypt["msg"])
+                            fill_input(text_elem, encrypt["msg"])
                         if "i agree terms" or "privacy" in phrase:
                             elem.find_element(css, "label").click()
                         if (
@@ -175,9 +180,13 @@ def easy_apply(driver, encrypt):
                             data = fill_self_identification(
                                 data, driver, encrypt["gender"]
                             )
-                    except: ...
-            if "voluntary" in find(css, "div      [class*='jobs-easy-apply-content']").text:
-                    data = fill_self_identification(data, driver, encrypt["gender"])
+                    except:
+                        ...
+            if (
+                "voluntary"
+                in find(css, "div      [class*='jobs-easy-apply-content']").text
+            ):
+                data = fill_self_identification(data, driver, encrypt["gender"])
             if finds(css, "button[aria-label*='Continue to next step']"):
                 data.append(find(css, "div[class='jobs-easy-apply-content']").text)
                 find(css, "[aria-label*='Continue to next step']").click()
@@ -192,12 +201,14 @@ def easy_apply(driver, encrypt):
                 break
         while True:
             try:
-                time.sleep(1)                
+                time.sleep(1)
                 find(css, "button[aria-label*='Dismiss']").click()
                 break
-            except: ...
+            except:
+                ...
         return list(set(data[1:]))
-    except: ...
+    except:
+        ...
 
 
 def auto_apply(driver, encrypt):
@@ -300,7 +311,8 @@ def apply_linkedin(driver, encrypt, inp, role, slry_range):
             find(css, "button[aria-label*='Salary filter.']").click()
             find(css, "label[for*='V2-7']").click()
             time.sleep(2)
-            [i
+            [
+                i
                 for i in finds(css, "button[data-control-name*='filter_show_results']")
                 if "result" in i.text
             ][0].click()
