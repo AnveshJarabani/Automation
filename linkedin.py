@@ -29,4 +29,4 @@ inp = "specific"  # specific for specific jobs
 role = "Data Engineer"
 slry_range = 1
 apply_linkedin(driver, encrypt, inp, role, slry_range)
-# salary range - 1 for Anvesh, 0 for sweeite to ignore range
+# salary range - 1 for Anvesh, 0 for sweeite to ignore rangeuser_id,
