@@ -309,7 +309,7 @@ def apply_linkedin(driver, encrypt, inp, role, slry_range):
         # time.sleep(2)
         if slry_range == 1:
             find(css, "button[aria-label*='Salary filter.']").click()
-            find(css, "label[for*='V2-7']").click()
+            find(css, "label[for*='V2-6']").click()
             time.sleep(2)
             [
                 i

@@ -3,9 +3,9 @@ from selenium.webdriver.support import expected_conditions as EC
 import json, time
 from selenium import webdriver
 from auto_fills import apply_linkedin
-
+from webdriver_manager.chrome import ChromeDriverManager
 chromeOptions = webdriver.ChromeOptions()
-driver = webdriver.Chrome(options=chromeOptions)
+driver = webdriver.Chrome()
 css = By.CSS_SELECTOR
 xpath = By.XPATH
 find = driver.find_element
