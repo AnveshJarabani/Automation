@@ -45,7 +45,7 @@
           "style": "diamond",
           "template": " \ue23a {{ if gt .Code 0 }}\uf00d {{ .Meaning }}{{ else }}\uf42e{{ end }} ",
           "trailing_diamond": "\ue0b4",
-          "type": "exit"
+          "type": "python"
         }
       ],
       "type": "prompt"
